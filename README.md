@@ -14,14 +14,25 @@ Projeto Web criado para a matéria Laboratório de Ciência de Dados. O projeto 
 
 ### Criação de ambiente virtual
 
+```powershell
+# Windows
+python -m venv .venv
+.venv\Scripts\activate
+```
+
 ```bash
 # Linux / macOS
 python -m venv .venv
 source .venv/bin/activate
 ```
 
-```powershell
-# Windows
-python -m venv .venv
-.venv\Scripts\activate
+### Instalação de bibliotecas
+
+```bash
+pip install -r requirements.txt
+```
+
+### Rodar aplicação
+```bash
+python app.py
 ```
