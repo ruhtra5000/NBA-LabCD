@@ -1,0 +1,20 @@
+table {
+    border-collapse: collapse;
+}
+
+tr {
+    border-bottom: 1pt solid black;
+}
+
+.botao-time {
+    padding: 12px 20px;
+    background-color: #263b5e;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.botao-time.selecionado {
+    background-color: #e67e22;
+    font-weight: bold;
+}
