@@ -19,10 +19,10 @@
 
         <nav>
             <a href="{{ url_for('inicio') }}">Home</a>
-            <a href="{{ url_for('medidasTendCentral') }}">Medidas de Têndencia Central</a>
-            <a href="{{ url_for('assimetria') }}">Assimetria</a>
-            <a href="{{ url_for('coefVariacao') }}">Coeficiente de Variação</a>
-            <a href="{{ url_for('intervInterquartil') }}">Intervalo Interquartil</a>
+            <a href="{{ url_for('medidasTendCentral', time='Cleveland Cavaliers') }}">Medidas de Têndencia Central</a>
+            <a href="{{ url_for('assimetria', time='Cleveland Cavaliers') }}">Assimetria</a>
+            <a href="{{ url_for('coefVariacao', time='Cleveland Cavaliers') }}">Coeficiente de Variação</a>
+            <a href="{{ url_for('intervInterquartil', time='Cleveland Cavaliers') }}">Intervalo Interquartil</a>
         </nav>
     </header>
 

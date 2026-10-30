@@ -6,7 +6,21 @@ Intervalo Interquartil
 
 {% block content %}
 
-    <h2>Intervalo Interquartil</h2>
+    <h1>Intervalo Interquartil</h1>
+
+    <h2>Selecione uma equipe</h2>
+
+    <div class="botoes-times">
+        <a href="{{ url_for('intervInterquartil', time='Cleveland Cavaliers') }}"
+        class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
+            Cleveland Cavaliers
+        </a>
+
+        <a href="{{ url_for('intervInterquartil', time='Brooklyn Nets') }}"
+        class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
+            Brooklyn Nets
+        </a>
+    </div>
 
     <p>Teste</p>
 

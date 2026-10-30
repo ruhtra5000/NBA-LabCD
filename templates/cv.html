@@ -6,7 +6,21 @@ Coeficiente de Variação
 
 {% block content %}
 
-    <h2>Coeficiente de Variação</h2>
+    <h1>Coeficiente de Variação</h1>
+
+    <h2>Selecione uma equipe</h2>
+
+    <div class="botoes-times">
+        <a href="{{ url_for('coefVariacao', time='Cleveland Cavaliers') }}"
+        class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
+            Cleveland Cavaliers
+        </a>
+
+        <a href="{{ url_for('coefVariacao', time='Brooklyn Nets') }}"
+        class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
+            Brooklyn Nets
+        </a>
+    </div>
 
     <p>Teste</p>
 
