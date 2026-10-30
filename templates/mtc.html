@@ -6,12 +6,78 @@ Medidas de Têndencia Central
 
 {% block content %}
 
-    <h2>Medidas de Têndencia Central</h2>
+    <h1>Medidas de Têndencia Central</h1>
 
-    <p>Teste</p>
+    <h2>Selecione uma equipe</h2>
+
+    <div class="botoes-times">
+        <a href="{{ url_for('medidasTendCentral', time='Cleveland Cavaliers') }}"
+        class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
+            Cleveland Cavaliers
+        </a>
+
+        <a href="{{ url_for('medidasTendCentral', time='Brooklyn Nets') }}"
+        class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
+            Brooklyn Nets
+        </a>
+    </div>
+
+    <h2>Média, Moda e Mediana</h2>
 
     <div>
-        <!-- Aqui serão exibidos os gráficos -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Média</th>
+                    <th>Mediana</th>
+                    <th>Moda</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, valores in estatMediaModaMediana.items() %}
+                    <tr>
+                        <td>{{ coluna }}</td>
+                        <td>{{ valores.media }}</td>
+                        <td>{{ valores.mediana }}</td>
+                        <td>{{ valores.moda | join(", ") }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Quartis e Outliers</h2>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável</th>
+                    <th>Q1</th>
+                    <th>Q3</th>
+                    <th>IQR</th>
+                    <th>Limite inferior</th>
+                    <th>Limite superior</th>
+                    <th>Quantidade</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, valores in estatQuartisOutliers.items() %}
+                <tr>
+                    <td>{{ coluna }}</td>
+                    <td>{{ valores.q1 }}</td>
+                    <td>{{ valores.q3 }}</td>
+                    <td>{{ valores.iqr }}</td>
+                    <td>{{ valores.limite_inferior }}</td>
+                    <td>{{ valores.limite_superior }}</td>
+                    <td>{{ valores.quantidade }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
 {% endblock %}
