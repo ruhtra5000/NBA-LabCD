@@ -1,12 +1,263 @@
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Minha aplicação Flask</title>
-</head>
-<body>
-    <h1>Bem-vindo ao Flask!</h1>
-    <p>Esta página foi criada com HTML e Python.</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}
+Homepage
+{% endblock %}
+
+{% block content %}
+
+    <style>        
+        .numerica { color: #2364aa; }
+        .categorica { color: #8a5a00; }
+        .data { color: #21845b; }
+        .texto { color: #7542a6; }
+        .binaria { color: #c0392b; }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        tr {
+            border-bottom: 1pt solid black;
+        }
+    </style>
+
+    <h2>Informações iniciais</h2>
+
+    <p>
+        Base de dados contendo estatísticas individuais das equipes da NBA por partida, 
+        incluindo resultados, desempenho ofensivo e defensivo e aproveitamento ao longo 
+        da temporada. A base completa é composta por 28 colunas e 2238 registros de partida.
+    </p>
+
+    <p>
+        O campo "GAME_DATE" representa a data em que uma partida ocorreu, esse campo foi 
+        tratado transformando-o do formato textual para o formato datetime, permitindo 
+        comparações temporais de forma mais simplificada.
+    </p>
+
+    <h2>Dicionário de Dados</h2>
+
+    <p>
+        Este dicionário apresenta a descrição das variáveis
+        utilizadas no conjunto de dados de estatísticas das
+        equipes da NBA por partida.
+    </p>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tipo do dado</th>
+                    <th>Nome antigo</th>
+                    <th>Nome novo</th>
+                    <th>Significado</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>Team_ID</td>
+                    <td>id_time</td>
+                    <td>Identificador único da equipe.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>Game_ID</td>
+                    <td>id_partida</td>
+                    <td>Identificador único da partida.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo data">Data</td>
+                    <td>GAME_DATE</td>
+                    <td>data_partida</td>
+                    <td>Data em que a partida ocorreu.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo categorica">Categórica</td>
+                    <td>MATCHUP</td>
+                    <td>confronto</td>
+                    <td>Identifica o adversário e o mando de campo. "vs." indica partida em casa e "@" indica partida fora.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo binaria">Binária</td>
+                    <td>WL</td>
+                    <td>resultado</td>
+                    <td>Resultado da partida: vitória ou derrota.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>W</td>
+                    <td>vitorias_acumuladas</td>
+                    <td>Total de vitórias da equipe na temporada até aquela partida.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>L</td>
+                    <td>derrotas_acumuladas</td>
+                    <td>Total de derrotas da equipe na temporada até aquela partida.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>W_PCT</td>
+                    <td>percentual_vitorias</td>
+                    <td>Proporção de vitórias da equipe em relação ao total de partidas disputadas na temporada.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>MIN</td>
+                    <td>minutos_jogados</td>
+                    <td>Total de minutos disputados pela equipe na partida.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>FGM</td>
+                    <td>arremessos_convertidos</td>
+                    <td>Quantidade de arremessos de quadra convertidos, incluindo cestas de dois e três pontos.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>FGA</td>
+                    <td>arremessos_tentados</td>
+                    <td>Quantidade de arremessos de quadra tentados.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>FG_PCT</td>
+                    <td>percentual_arremessos</td>
+                    <td>Percentual de aproveitamento nos arremessos de quadra.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>FG3M</td>
+                    <td>cestas_3_pontos_convertidas</td>
+                    <td>Quantidade de cestas de três pontos convertidas.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>FG3A</td>
+                    <td>tentativas_3_pontos</td>
+                    <td>Quantidade de tentativas de arremessos de três pontos.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>FG3_PCT</td>
+                    <td>percentual_3_pontos</td>
+                    <td>Percentual de aproveitamento nos arremessos de três pontos.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>FTM</td>
+                    <td>lances_livres_convertidos</td>
+                    <td>Quantidade de lances livres convertidos.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>FTA</td>
+                    <td>lances_livres_tentados</td>
+                    <td>Quantidade de lances livres tentados.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>FT_PCT</td>
+                    <td>percentual_lances_livres</td>
+                    <td>Percentual de aproveitamento nos lances livres.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>OREB</td>
+                    <td>rebotes_ofensivos</td>
+                    <td>Quantidade de rebotes ofensivos conquistados pela equipe.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>DREB</td>
+                    <td>rebotes_defensivos</td>
+                    <td>Quantidade de rebotes defensivos conquistados pela equipe.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>REB</td>
+                    <td>total_rebotes</td>
+                    <td>Total de rebotes conquistados, somando os ofensivos e defensivos.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>AST</td>
+                    <td>assistencias</td>
+                    <td>Quantidade de assistências realizadas pela equipe.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>STL</td>
+                    <td>roubos_bola</td>
+                    <td>Quantidade de roubos de bola realizados pela equipe.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>BLK</td>
+                    <td>bloqueios</td>
+                    <td>Quantidade de arremessos adversários bloqueados pela equipe.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>TOV</td>
+                    <td>perdas_bola</td>
+                    <td>Quantidade de vezes que a equipe perdeu a posse de bola.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>PF</td>
+                    <td>faltas_pessoais</td>
+                    <td>Quantidade de faltas pessoais cometidas pela equipe.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo numerica">Numérica</td>
+                    <td>PTS</td>
+                    <td>pontos</td>
+                    <td>Total de pontos marcados pela equipe na partida.</td>
+                </tr>
+
+                <tr>
+                    <td class="tipo texto">Texto</td>
+                    <td>TEAM_NAME</td>
+                    <td>nome_time</td>
+                    <td>Nome completo da equipe da NBA.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Métodos e análise de valores ausentes e inconsistências</h2>
+
+    <p>a</p>
+
+{% endblock %}
