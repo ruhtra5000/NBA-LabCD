@@ -7,6 +7,20 @@ Intervalo Interquartil
 {% block content %}
 
     <style>
+        .tabela-container {
+            width: 100%;
+            overflow-x: auto;
+            box-sizing: border-box;
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+        }
+
+        .tabela-container table {
+            border: none;
+            border-radius: 0;
+        }
+
         .badge {
             display: inline-block;
             padding: 4px 10px;
@@ -52,6 +66,7 @@ Intervalo Interquartil
             border-radius: 12px;
             padding: 16px;
             margin: 20px 0;
+            overflow-x: auto;
         }
     </style>
 
@@ -83,7 +98,7 @@ Intervalo Interquartil
         </div>
     </section>
 
-    <h2>1. Método de Cálculo dos Quartis e Definição do IQR</h2>
+    <h2>Método de Cálculo dos Quartis e Definição do IQR</h2>
 
     <section class="explicacao-teste">
         <div class="explicacao-teste-titulo">Fórmula e Método de Interpolação Adotado</div>
@@ -107,9 +122,9 @@ Intervalo Interquartil
         </p>
     </section>
 
-    <h2>2. Tabela Lado a Lado (Q₁, Mediana, Q₃ e IQR) e Interpretação Prática — {{ time_selecionado }}</h2>
+    <h2>Tabela Lado a Lado (Q₁, Mediana, Q₃ e IQR) e Interpretação Prática — {{ time_selecionado }}</h2>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -158,13 +173,13 @@ Intervalo Interquartil
         </ul>
     </section>
 
-    <h2>3. Comparação do IQR com Amplitude Total e Desvio Padrão (Robustez) — {{ time_selecionado }}</h2>
+    <h2>Comparação do IQR com Amplitude Total e Desvio Padrão (Robustez) — {{ time_selecionado }}</h2>
 
     <div class="grafico-container">
         {{ graficoRobustez | safe }}
     </div>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -217,9 +232,9 @@ Intervalo Interquartil
         </ul>
     </section>
 
-    <h2>4. Regra de Detecção de Outliers (1,5 × IQR vs. 3,0 × IQR) e Conferência com o Boxplot ({{ time_selecionado }})</h2>
+    <h2>Regra de Detecção de Outliers (1,5 × IQR vs. 3,0 × IQR) e Conferência com o Boxplot ({{ time_selecionado }})</h2>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -274,13 +289,13 @@ Intervalo Interquartil
         </p>
     </section>
 
-    <h2>5. Quadro-Resumo do IQR (Linhas = Variáveis, Colunas = Times, Células = IQR) e Articulação Final</h2>
+    <h2>Quadro-Resumo do IQR (Linhas = Variáveis, Colunas = Times, Células = IQR) e Articulação Final</h2>
 
     <div class="grafico-container">
         {{ graficoComparativo | safe }}
     </div>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>

@@ -7,6 +7,20 @@ Assimetria
 {% block content %}
 
     <style>
+        .tabela-container {
+            width: 100%;
+            overflow-x: auto;
+            box-sizing: border-box;
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+        }
+
+        .tabela-container table {
+            border: none;
+            border-radius: 0;
+        }
+
         .botoes-variaveis {
             display: flex;
             flex-wrap: wrap;
@@ -83,6 +97,7 @@ Assimetria
             border-radius: 12px;
             padding: 16px;
             margin: 20px 0;
+            overflow-x: auto;
         }
     </style>
 
@@ -114,7 +129,7 @@ Assimetria
         </div>
     </section>
 
-    <h2>1. Metodologia, Fórmula Adotada e Critérios de Classificação</h2>
+    <h2>Metodologia, Fórmula Adotada e Critérios de Classificação</h2>
 
     <section class="explicacao-teste">
         <div class="explicacao-teste-titulo">Coeficiente de Momento Ajustado de Fisher-Pearson (G₁)</div>
@@ -160,9 +175,9 @@ Assimetria
         </ul>
     </section>
 
-    <h2>2. Resultados de Assimetria — {{ time_selecionado }}</h2>
+    <h2>Resultados de Assimetria — {{ time_selecionado }}</h2>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -212,7 +227,7 @@ Assimetria
         </table>
     </div>
 
-    <h2>3. Confirmação Visual: Histograma + Curva KDE + Boxplot ({{ time_selecionado }})</h2>
+    <h2>Confirmação Visual: Histograma + Curva KDE + Boxplot ({{ time_selecionado }})</h2>
 
     <p>
         Selecione abaixo a variável para inspecionar simultaneamente o <b>Boxplot horizontal</b> (no topo) e o
@@ -265,13 +280,13 @@ Assimetria
         </ul>
     </section>
 
-    <h2>4. Comparação entre Variáveis e entre Equipes (Cavaliers vs. Nets)</h2>
+    <h2>Comparação entre Variáveis e entre Equipes (Cavaliers vs. Nets)</h2>
 
     <div class="grafico-container">
         {{ graficoComparativo | safe }}
     </div>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -325,7 +340,7 @@ Assimetria
         </p>
     </section>
 
-    <h2>5. Implicações Práticas para Análise e Modelagem</h2>
+    <h2>Implicações Práticas para Análise e Modelagem</h2>
 
     <section class="explicacao-teste">
         <div class="explicacao-teste-titulo">Média vs. Mediana, Transformações e Métodos Robustos</div>

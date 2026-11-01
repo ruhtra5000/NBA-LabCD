@@ -7,6 +7,20 @@ Coeficiente de Variação
 {% block content %}
 
     <style>
+        .tabela-container {
+            width: 100%;
+            overflow-x: auto;
+            box-sizing: border-box;
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+        }
+
+        .tabela-container table {
+            border: none;
+            border-radius: 0;
+        }
+
         .badge {
             display: inline-block;
             padding: 4px 10px;
@@ -52,6 +66,7 @@ Coeficiente de Variação
             border-radius: 12px;
             padding: 16px;
             margin: 20px 0;
+            overflow-x: auto;
         }
     </style>
 
@@ -83,7 +98,7 @@ Coeficiente de Variação
         </div>
     </section>
 
-    <h2>1. Fórmula Explícita e Condições de Validade do CV</h2>
+    <h2>Fórmula Explícita e Condições de Validade do CV</h2>
 
     <section class="explicacao-teste">
         <div class="explicacao-teste-titulo">Definição Matemática e Convenção Adotada</div>
@@ -117,9 +132,9 @@ Coeficiente de Variação
         </ul>
     </section>
 
-    <h2>2. Resultados do Coeficiente de Variação — {{ time_selecionado }}</h2>
+    <h2>Resultados do Coeficiente de Variação — {{ time_selecionado }}</h2>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -188,7 +203,7 @@ Coeficiente de Variação
         </ul>
     </section>
 
-    <h2>3. Comparação entre Escalas Diferentes: Desvio Padrão Bruto (s) vs. CV (%)</h2>
+    <h2>Comparação entre Escalas Diferentes: Desvio Padrão Bruto (s) vs. CV (%)</h2>
 
     <div class="grafico-container">
         {{ graficoEscalas | safe }}
@@ -210,9 +225,9 @@ Coeficiente de Variação
         </p>
     </section>
 
-    <h2>4. Confronto do CV com Desvio Padrão, Assimetria e Alternativas Robustas ({{ time_selecionado }})</h2>
+    <h2>Confronto do CV com Desvio Padrão, Assimetria e Alternativas Robustas ({{ time_selecionado }})</h2>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -260,13 +275,13 @@ Coeficiente de Variação
         </ul>
     </section>
 
-    <h2>5. Quadro-Resumo Comparativo (Linhas = Variáveis, Colunas = Times, Células = CV)</h2>
+    <h2>Quadro-Resumo Comparativo (Linhas = Variáveis, Colunas = Times, Células = CV)</h2>
 
     <div class="grafico-container">
         {{ graficoComparativo | safe }}
     </div>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
