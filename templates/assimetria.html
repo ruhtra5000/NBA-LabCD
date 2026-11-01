@@ -6,14 +6,94 @@ Assimetria
 
 {% block content %}
 
-    <h1>Assimetria/Skewness</h1>
+    <style>
+        .botoes-variaveis {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 16px 0 24px 0;
+        }
+
+        .botao-variavel {
+            padding: 10px 16px;
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            color: #374151;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .botao-variavel:hover {
+            border-color: #A5B4FC;
+            background-color: #FAFAFF;
+        }
+
+        .botao-variavel.selecionado {
+            border: 2px solid #4F46E5;
+            background-color: #F5F5FF;
+            color: #4338CA;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-positiva {
+            background-color: #EFF6FF;
+            color: #1D4ED8;
+        }
+
+        .badge-negativa {
+            background-color: #FEF2F2;
+            color: #B91C1C;
+        }
+
+        .badge-simetrica {
+            background-color: #F0FDF4;
+            color: #15803D;
+        }
+
+        .badge-moderada {
+            background-color: #FFFBEB;
+            color: #B45309;
+        }
+
+        .formula-box {
+            background-color: #F8FAFC;
+            border-left: 4px solid #4F46E5;
+            padding: 14px 18px;
+            margin: 12px 0;
+            font-family: monospace;
+            font-size: 14px;
+            color: #1E293B;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .grafico-container {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+    </style>
+
+    <h1>Assimetria (Skewness)</h1>
 
     <section class="selecao-times">
         <h2>Selecione uma equipe</h2>
 
         <div class="botoes-times">
 
-            <a href="{{ url_for('assimetria', time='Cleveland Cavaliers') }}"
+            <a href="{{ url_for('assimetria', time='Cleveland Cavaliers', variavel=variavel_selecionada) }}"
             class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
 
                 <img src="{{ url_for('static', filename='images/cavaliers.png') }}"
@@ -22,7 +102,7 @@ Assimetria
                 <span>Cleveland Cavaliers</span>
             </a>
 
-            <a href="{{ url_for('assimetria', time='Brooklyn Nets') }}"
+            <a href="{{ url_for('assimetria', time='Brooklyn Nets', variavel=variavel_selecionada) }}"
             class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
 
                 <img src="{{ url_for('static', filename='images/nets.png') }}"
@@ -34,11 +114,256 @@ Assimetria
         </div>
     </section>
 
+    <h2>1. Metodologia, Fórmula Adotada e Critérios de Classificação</h2>
 
-    <p>Teste</p>
+    <section class="explicacao-teste">
+        <div class="explicacao-teste-titulo">Coeficiente de Momento Ajustado de Fisher-Pearson (G₁)</div>
+
+        <h3>Fórmula e Implementação Utilizada</h3>
+        <p>
+            Para mensurar a assimetria das 7 variáveis do projeto, adotou-se como métrica principal o
+            <b>Coeficiente de Assimetria de Momento Ajustado de Fisher-Pearson (G₁)</b>, implementado nativamente por
+            <code>pandas.Series.skew()</code>:
+        </p>
+        <div class="formula-box">
+            G₁ = [ √(n · (n - 1)) / (n - 2) ] · [ (1/n) ∑ (xᵢ - x̄)³ ] / [ (1/n) ∑ (xᵢ - x̄)² ]^(3/2)
+        </div>
+        <p>
+            De maneira complementar, a tabela também apresenta o <b>2º Coeficiente de Pearson</b>
+            (<code>3 · (Média - Mediana) / s</code>) e o <b>Coeficiente Quartílico de Bowley</b>
+            (<code>[(Q₃ - Q₂) - (Q₂ - Q₁)] / IQR</code>), todos adimensionais e padronizados com 2 casas decimais.
+        </p>
+
+        <h3>Justificativa da Escolha</h3>
+        <p>
+            O coeficiente ajustado de <b>Fisher-Pearson (G₁)</b> foi escolhido como referência principal porque:
+            (1) aplica o fator de correção amostral <code>√(n(n-1)) / (n-2)</code>, corrigindo o viés de subestimação em amostras finitas
+            (n ≈ 75 jogos por equipe na temporada regular); e (2) utiliza o terceiro momento central ao cubo, capturando a influência real
+            das caudas (partidas atípicas ou prorrogações). O coeficiente de <b>Bowley</b> foi incluído como contraponto robusto por avaliar
+            apenas os 50% centrais da distribuição (entre Q₁ e Q₃).
+        </p>
+
+        <h3>Critérios Explícitos de Direção e Intensidade (Critério de Bulmer)</h3>
+        <ul>
+            <li>
+                <b>Direção (pelo sinal de G₁):</b>
+                <b>Simétrica</b> quando <code>|G₁| &lt; 0,05</code>;
+                <b>Assimétrica à direita (Positiva)</b> quando <code>G₁ ≥ +0,05</code> (cauda superior mais longa);
+                <b>Assimétrica à esquerda (Negativa)</b> quando <code>G₁ ≤ -0,05</code> (cauda inferior mais longa).
+            </li>
+            <li>
+                <b>Intensidade (pelo módulo |G₁|):</b>
+                <b>Aproximadamente simétrica</b> para <code>|G₁| &lt; 0,50</code>;
+                <b>Assimetria moderada</b> para <code>0,50 ≤ |G₁| &lt; 1,00</code>;
+                <b>Assimetria forte</b> para <code>|G₁| ≥ 1,00</code>.
+            </li>
+        </ul>
+    </section>
+
+    <h2>2. Resultados de Assimetria — {{ time_selecionado }}</h2>
 
     <div>
-        <!-- Aqui serão exibidos os gráficos -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Unidade (Média/Mediana)</th>
+                    <th>Média</th>
+                    <th>Mediana</th>
+                    <th>Fisher-Pearson (G₁)</th>
+                    <th>Pearson (2º)</th>
+                    <th>Bowley (Quartílico)</th>
+                    <th>Direção da Distribuição</th>
+                    <th>Intensidade (|G₁|)</th>
+                    <th>Medida Típica Recomendada</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, valores in estatAssimetria.items() %}
+                <tr>
+                    <td><b>{{ valores.nome_exibicao }}</b></td>
+                    <td>{{ valores.unidade }}</td>
+                    <td>{{ valores.media }}</td>
+                    <td>{{ valores.mediana }}</td>
+                    <td><b>{{ valores.g1_fisher }}</b></td>
+                    <td>{{ valores.pearson }}</td>
+                    <td>{{ valores.bowley }}</td>
+                    <td>
+                        {% if "Positiva" in valores.direcao %}
+                            <span class="badge badge-positiva">{{ valores.direcao }}</span>
+                        {% elif "Negativa" in valores.direcao %}
+                            <span class="badge badge-negativa">{{ valores.direcao }}</span>
+                        {% else %}
+                            <span class="badge badge-simetrica">{{ valores.direcao }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if valores.intensidade == "Moderada" or valores.intensidade == "Forte" %}
+                            <span class="badge badge-moderada">{{ valores.intensidade }}</span>
+                        {% else %}
+                            <span class="badge badge-simetrica">{{ valores.intensidade }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ valores.medida_recomendada }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
+    <h2>3. Confirmação Visual: Histograma + Curva KDE + Boxplot ({{ time_selecionado }})</h2>
+
+    <p>
+        Selecione abaixo a variável para inspecionar simultaneamente o <b>Boxplot horizontal</b> (no topo) e o
+        <b>Histograma de densidade com a curva KDE (Kernel Density Estimation) sobreposta</b> (na base), incluindo as linhas de referência da Média e da Mediana:
+    </p>
+
+    <div class="botoes-variaveis">
+        {% for chave, meta in metadados_variaveis.items() %}
+            <a href="{{ url_for('assimetria', time=time_selecionado, variavel=chave) }}"
+               class="botao-variavel {% if variavel_selecionada == chave %}selecionado{% endif %}">
+                {{ meta.nome }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="grafico-container">
+        {{ graficoDistribuicao | safe }}
+    </div>
+
+    <section class="explicacao-teste">
+        <div class="explicacao-teste-titulo">Análise Crítica: O Coeficiente e os Gráficos Contam a Mesma História?</div>
+
+        <h3>Casos de Concordância</h3>
+        <p>
+            Na maioria das variáveis — como <b>Pontos (PTS)</b>, <b>Assistências (AST)</b> e <b>Faltas Pessoais (PF)</b> — o coeficiente
+            <b>G₁ de Fisher-Pearson</b>, o <b>Histograma + KDE</b> e o <b>Boxplot</b> contam exatamente a mesma história. Por exemplo, em
+            <b>Faltas Pessoais</b> do <b>Brooklyn Nets</b> (<code>G₁ = +0,60</code>), a curva KDE apresenta um pico concentrado próximo a 20–21 faltas
+            e uma cauda longa que se estende para a direita (partidas com 29 a 31 faltas), confirmada pelos outliers superiores no Boxplot e pela
+            média (<code>21,27</code>) superior à mediana (<code>21,00</code>). De modo análogo, em <b>Pontos</b> do <b>Brooklyn Nets</b>
+            (<code>G₁ = -0,44</code>), a cauda esquerda alongada na curva KDE e os outliers inferiores no Boxplot confirmam a assimetria negativa.
+        </p>
+
+        <h3>Por que Ocorrem Divergências Aparentes em Variáveis Discretas de Contagem Baixa?</h3>
+        <p>
+            Em variáveis de contagem inteira e baixa amplitude — especialmente <b>Roubos de Bola (STL)</b> no <b>Cleveland Cavaliers</b>
+            (<code>G₁ = +0,42</code>, mas <code>Média = 8,57 &lt; Mediana = 9,00</code> e <code>Bowley = -0,50</code>) — observa-se uma divergência
+            interessante entre o miolo da caixa (Boxplot) e o coeficiente de momento G₁:
+        </p>
+        <ul>
+            <li>
+                <b>No centro da distribuição (Q₁ a Q₃):</b> Como os dados são números inteiros discretos, a mediana (<code>9,00</code>) fica mais próxima
+                de Q₃ (<code>10,00</code>) do que de Q₁ (<code>6,00</code>), fazendo o coeficiente de Bowley apontar assimetria negativa no intervalo central.
+            </li>
+            <li>
+                <b>Nas caudas da distribuição:</b> Existem partidas atípicas na cauda direita (até 17 roubos de bola). Como o coeficiente G₁ de Fisher-Pearson
+                eleva os desvios ao cubo <code>(xᵢ - x̄)³</code>, os valores extremos positivos pesam muito mais do que a concentração central, resultando em
+                <code>G₁ = +0,42</code> (assimetria positiva). Portanto, a divergência decorre da <b>discretização dos dados inteiros combinada à sensibilidade
+                do terceiro momento aos extremos</b>.
+            </li>
+        </ul>
+    </section>
+
+    <h2>4. Comparação entre Variáveis e entre Equipes (Cavaliers vs. Nets)</h2>
+
+    <div class="grafico-container">
+        {{ graficoComparativo | safe }}
+    </div>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Cavaliers — G₁</th>
+                    <th>Cavaliers — Direção / Intensidade</th>
+                    <th>Nets — G₁</th>
+                    <th>Nets — Direção / Intensidade</th>
+                    <th>O Padrão se Repete?</th>
+                    <th>Equipe Mais Assimétrica</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, comp in comparativoTimes.items() %}
+                <tr>
+                    <td><b>{{ comp.nome_exibicao }}</b></td>
+                    <td><b>{{ comp.cavs_g1 }}</b></td>
+                    <td>{{ comp.cavs_direcao }} ({{ comp.cavs_intensidade }})</td>
+                    <td><b>{{ comp.nets_g1 }}</b></td>
+                    <td>{{ comp.nets_direcao }} ({{ comp.nets_intensidade }})</td>
+                    <td>{{ comp.padrao_repete }}</td>
+                    <td><b>{{ comp.mais_assimetrica }}</b></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <section class="explicacao-teste" style="margin-top: 24px;">
+        <div class="explicacao-teste-titulo">Síntese Comparativa entre Variáveis e Equipes</div>
+
+        <h3>Quais variáveis são mais assimétricas?</h3>
+        <p>
+            Considerando as duas equipes, a variável mais assimétrica é <b>Faltas Pessoais (PF)</b> no <b>Brooklyn Nets</b>
+            (<code>G₁ = +0,60</code>), sendo a <b>única distribuição classificada com assimetria moderada</b> (<code>|G₁| ≥ 0,50</code>).
+            Em seguida destacam-se <b>Roubos de Bola (STL)</b> (<code>+0,48</code> no Nets e <code>+0,42</code> no Cavaliers) e
+            <b>Pontos (PTS)</b> no Nets (<code>-0,44</code>). Já no <b>Cleveland Cavaliers</b>, todas as 7 variáveis permanecem na faixa
+            <b>aproximadamente simétrica</b> (<code>|G₁| &lt; 0,50</code>), com <b>Faltas Pessoais</b> sendo a mais simétrica (<code>G₁ = +0,12</code>).
+        </p>
+
+        <h3>O padrão se repete nos dois times do grupo?</h3>
+        <p>
+            <b>O padrão se repete em 4 das 7 variáveis</b> (<b>Assistências</b>, <b>Roubos de Bola</b>, <b>Bloqueios</b> e <b>Faltas Pessoais</b>),
+            nas quais ambos os times apresentam assimetria positiva (cauda à direita), comportamento natural em estatísticas de contagem esportiva que
+            possuem limite inferior físico em zero, mas podem atingir picos altos em jogos intensos.
+            Por outro lado, <b>o padrão se inverte em 3 variáveis</b> (<b>Pontos</b>, <b>Total de Rebotes</b> e <b>Cestas de 3 Pontos</b>):
+            enquanto o <b>Cleveland Cavaliers</b> apresenta cauda positiva (jogos de explosão ofensiva acima da média), o <b>Brooklyn Nets</b>
+            apresenta assimetria negativa (<code>-0,44</code> em Pontos e <code>-0,28</code> em Rebotes e Cestas de 3), refletindo partidas com apagões
+            ofensivos que puxam a cauda da distribuição para valores baixos.
+        </p>
+    </section>
+
+    <h2>5. Implicações Práticas para Análise e Modelagem</h2>
+
+    <section class="explicacao-teste">
+        <div class="explicacao-teste-titulo">Média vs. Mediana, Transformações e Métodos Robustos</div>
+
+        <h3>Média ou Mediana: qual representa melhor o valor típico?</h3>
+        <ul>
+            <li>
+                <b>Cleveland Cavaliers:</b> Como todas as 7 variáveis possuem <code>|G₁| &lt; 0,50</code> (aproximadamente simétricas), a
+                <b>Média</b> e a <b>Mediana</b> são extremamente próximas (ex.: Pontos tem média <code>119,39</code> e mediana <code>118,00</code>;
+                Rebotes tem média <code>44,31</code> e mediana <code>44,00</code>). Portanto, a <b>Média</b> representa bem o desempenho típico,
+                ressalvando-se apenas o uso complementar da <b>Mediana</b> nas variáveis que apresentam outliers no Boxplot.
+            </li>
+            <li>
+                <b>Brooklyn Nets:</b> Em <b>Faltas Pessoais (PF)</b> (<code>G₁ = +0,60</code>, assimetria moderada) e em <b>Pontos (PTS)</b>
+                (<code>G₁ = -0,44</code>, próxima ao limiar moderado e com outliers inferiores), a <b>Mediana</b> é a medida mais recomendada para
+                representar o valor típico da equipe, pois não é distorcida por jogos extremos. Nas demais variáveis (<code>|G₁| ≤ 0,48</code>),
+                Média e Mediana convergem.
+            </li>
+        </ul>
+
+        <h3>Há necessidade de transformações (ex.: log) ou métodos robustos em análises posteriores?</h3>
+        <p>
+            Como <b>nenhuma das 7 variáveis ultrapassa o limiar de assimetria forte</b> (<code>|G₁| ≥ 1,00</code>), <b>não é estritamente necessário</b>
+            aplicar transformações não-lineares agressivas como <code>log(x)</code> (que inclusive dificultariam a interpretação direta na unidade original
+            de pontos ou rebotes). Contudo, para etapas futuras de Machine Learning e inferência estatística, recomenda-se:
+        </p>
+        <ul>
+            <li>
+                <b>Uso de Métodos Robustos:</b> Em variáveis com assimetria moderada ou presença de outliers (como <b>Faltas Pessoais</b> e <b>Pontos</b> no Nets,
+                ou <b>Roubos de Bola</b> e <b>Bloqueios</b>), utilizar padronização robusta (<code>RobustScaler</code> baseado em Mediana e IQR em vez de
+                Z-score padrão) para evitar que partidas atípicas dominem os pesos do modelo.
+            </li>
+            <li>
+                <b>Transformação Raiz Quadrada (<code>√x</code>) opcional para contagens baixas:</b> Caso modelos paramétricos lineares exijam estabilização
+                de variância em variáveis de contagem do tipo Poisson (como <b>Bloqueios</b> e <b>Roubos de Bola</b>), a transformação suave <code>√x</code>
+                é mais apropriada do que o logaritmo por lidar naturalmente com valores baixos ou iguais a zero.
+            </li>
+        </ul>
+    </section>
 
 {% endblock %}
