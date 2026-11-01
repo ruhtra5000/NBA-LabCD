@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.graph_objects as go
 
 # Colunas utilizadas (em todas as analises)
 colunas = [
@@ -68,3 +69,137 @@ def quartisOutliers(df: pd.DataFrame, time: str):
         }
 
     return resultados
+
+
+# Retorna algumas medidas de dispersão por variável
+def medidasDispersao(df: pd.DataFrame, time: str):
+    dados_time = filtrarBasePorTime(df, time)
+
+    resultados = {}
+
+    for coluna in colunas:
+        menor = dados_time[coluna].min()
+        maior = dados_time[coluna].max()
+
+        resultados[coluna] = {
+            "menor_valor": round(menor, 2),
+            "maior_valor": round(maior, 2),
+            "amplitude": round(maior - menor, 2),
+            "desvio_padrao": round(dados_time[coluna].std(), 2),
+            "variancia": round(dados_time[coluna].var(), 2)
+        }
+
+    return resultados
+
+
+# Retorna um gráfico Boxplot para cada variável
+def boxplotMtc(df: pd.DataFrame, time: str):
+    dados_time = filtrarBasePorTime(df, time)
+    resultados = quartisOutliers(df, time)
+
+    fig = go.Figure()
+
+    for coluna in colunas:
+        resultado = resultados[coluna]
+
+        q1 = resultado["q1"]
+        q3 = resultado["q3"]
+        limite_inferior = resultado["limite_inferior"]
+        limite_superior = resultado["limite_superior"]
+
+        valores = dados_time[coluna].dropna()
+
+        if valores.empty:
+            continue
+
+        # Identificação dos outliers
+        outliers = valores[
+            (valores < limite_inferior) |
+            (valores > limite_superior)
+        ]
+
+        # Valores que não são outliers
+        valores_validos = valores[
+            (valores >= limite_inferior) &
+            (valores <= limite_superior)
+        ]
+
+        if valores_validos.empty:
+            continue
+
+        media = valores.mean()
+        moda = valores.mode().tolist()
+
+        # Boxplot
+        fig.add_trace(go.Box(
+            name=coluna,
+            x=[coluna],
+            q1=[q1],
+            median=[valores.median()],
+            q3=[q3],
+            lowerfence=[valores_validos.min()],
+            upperfence=[valores_validos.max()],
+            boxpoints=False,
+            showlegend=False
+        ))
+
+        # Média
+        fig.add_trace(go.Scatter(
+            x=[coluna],
+            y=[media],
+            mode="markers",
+            name="Média",
+            marker=dict(
+                symbol="diamond",
+                size=10,
+                color="red"
+            ),
+            showlegend=(coluna == colunas[0]),
+            hovertemplate="Média: %{y:.2f}<extra></extra>"
+        ))
+
+        # Moda
+        if moda:
+            fig.add_trace(go.Scatter(
+                x=[coluna] * len(moda),
+                y=moda,
+                mode="markers",
+                name="Moda",
+                marker=dict(
+                    symbol="triangle-up",
+                    size=10,
+                    color="green"
+                ),
+                showlegend=(coluna == colunas[0]),
+                hovertemplate="Moda: %{y:.2f}<extra></extra>"
+            ))
+
+        # Outliers
+        if not outliers.empty:
+            fig.add_trace(go.Scatter(
+                x=[coluna] * len(outliers),
+                y=outliers,
+                mode="markers",
+                name="Outliers",
+                marker=dict(
+                    symbol="circle",
+                    size=8,
+                    color="black"
+                ),
+                showlegend=(coluna == colunas[0]),
+                hovertemplate="Outlier: %{y}<extra></extra>"
+            ))
+
+    fig.update_layout(
+        title=f"Distribuição das estatísticas - {time}",
+        xaxis_title="Variáveis",
+        yaxis_title="Valores",
+        xaxis=dict(
+            type="category",
+            categoryorder="array",
+            categoryarray=colunas
+        ),
+        legend_title="Medidas estatísticas"
+    )
+
+    return fig

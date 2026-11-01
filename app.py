@@ -18,12 +18,20 @@ def inicio():
 def medidasTendCentral(time: str):
     estatMediaModaMediana = mediaModaMediana(df, time)
     estatQuartisOutliers = quartisOutliers(df, time)
+    estatMedidasDispersao = medidasDispersao(df, time)
+
+    boxplotGrafico = boxplotMtc(df, time).to_html(
+        full_html=False,
+        include_plotlyjs="cdn"
+    )
 
     return render_template(
         "mtc.html",
         time_selecionado=time,
         estatMediaModaMediana = estatMediaModaMediana,
-        estatQuartisOutliers = estatQuartisOutliers
+        estatQuartisOutliers = estatQuartisOutliers,
+        estatMedidasDispersao = estatMedidasDispersao,
+        boxplotGrafico = boxplotGrafico
     )
 
 @app.route("/assimetria/<time>")

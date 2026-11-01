@@ -8,19 +8,31 @@ Medidas de Têndencia Central
 
     <h1>Medidas de Têndencia Central</h1>
 
-    <h2>Selecione uma equipe</h2>
+    <section class="selecao-times">
+        <h2>Selecione uma equipe</h2>
 
-    <div class="botoes-times">
-        <a href="{{ url_for('medidasTendCentral', time='Cleveland Cavaliers') }}"
-        class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
-            Cleveland Cavaliers
-        </a>
+        <div class="botoes-times">
 
-        <a href="{{ url_for('medidasTendCentral', time='Brooklyn Nets') }}"
-        class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
-            Brooklyn Nets
-        </a>
-    </div>
+            <a href="{{ url_for('medidasTendCentral', time='Cleveland Cavaliers') }}"
+            class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
+
+                <img src="{{ url_for('static', filename='images/cavaliers.png') }}"
+                    alt="Logo Cleveland Cavaliers">
+
+                <span>Cleveland Cavaliers</span>
+            </a>
+
+            <a href="{{ url_for('medidasTendCentral', time='Brooklyn Nets') }}"
+            class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
+
+                <img src="{{ url_for('static', filename='images/nets.png') }}"
+                    alt="Logo Brooklyn Nets">
+
+                <span>Brooklyn Nets</span>
+            </a>
+
+        </div>
+    </section>
 
     <h2>Média, Moda e Mediana</h2>
 
@@ -48,13 +60,43 @@ Medidas de Têndencia Central
         </table>
     </div>
 
+    <h2>Medidas de Dispersão</h2>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Menor valor</th>
+                    <th>Maior valor</th>
+                    <th>Amplitude</th>
+                    <th>Desvio Padrão</th>
+                    <th>Variância</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, valores in estatMedidasDispersao.items() %}
+                <tr>
+                    <td>{{ coluna }}</td>
+                    <td>{{ valores.menor_valor }}</td>
+                    <td>{{ valores.maior_valor }}</td>
+                    <td>{{ valores.amplitude }}</td>
+                    <td>{{ valores.desvio_padrao }}</td>
+                    <td>{{ valores.variancia }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
     <h2>Quartis e Outliers</h2>
 
     <div>
         <table>
             <thead>
                 <tr>
-                    <th>Variável</th>
+                    <th>Variável Analisada</th>
                     <th>Q1</th>
                     <th>Q3</th>
                     <th>IQR</th>
@@ -79,5 +121,23 @@ Medidas de Têndencia Central
             </tbody>
         </table>
     </div>
+
+    <h2>Boxplot - {{ time_selecionado }}</h2>
+
+    <div>
+        {{ boxplotGrafico | safe }}
+    </div>
+
+    <p>
+        Após a visualização do gráfico Boxplot e, principalmente, a identificação de outliers, 
+        pode-se comentar sobre o uso do <b>Z-Score</b>. O Z-Score, em termos simples, seria uma 
+        outra maneira de identificar possíveis outliers em um conjunto de dados. 
+    </p>
+
+    <p>
+        Enquanto o IQR utiliza os quartis Q1 e Q3 para realização do cálculo, o Z-Score utiliza 
+        a média e o desvio padrão. Comumente, usando o Z-Score, toma-se como outlier qualquer valor 
+        que esteja 4+ desvios padrão acima ou abaixo da média.
+    </p>
 
 {% endblock %}
