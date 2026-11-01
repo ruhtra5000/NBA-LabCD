@@ -6,7 +6,56 @@ Intervalo Interquartil
 
 {% block content %}
 
-    <h1>Intervalo Interquartil</h1>
+    <style>
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-concentrado {
+            background-color: #F0FDF4;
+            color: #15803D;
+        }
+
+        .badge-espalhado {
+            background-color: #FFFBEB;
+            color: #B45309;
+        }
+
+        .badge-empate {
+            background-color: #EFF6FF;
+            color: #1D4ED8;
+        }
+
+        .badge-outlier {
+            background-color: #FEF2F2;
+            color: #B91C1C;
+        }
+
+        .formula-box {
+            background-color: #F8FAFC;
+            border-left: 4px solid #4F46E5;
+            padding: 14px 18px;
+            margin: 12px 0;
+            font-family: monospace;
+            font-size: 14px;
+            color: #1E293B;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .grafico-container {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+    </style>
+
+    <h1>Intervalo Interquartil (IQR)</h1>
 
     <section class="selecao-times">
         <h2>Selecione uma equipe</h2>
@@ -34,10 +83,272 @@ Intervalo Interquartil
         </div>
     </section>
 
-    <p>Teste</p>
+    <h2>1. Método de Cálculo dos Quartis e Definição do IQR</h2>
+
+    <section class="explicacao-teste">
+        <div class="explicacao-teste-titulo">Fórmula e Método de Interpolação Adotado</div>
+
+        <h3>Fórmula do Intervalo Interquartil</h3>
+        <p>
+            O <b>Intervalo Interquartil (IQR)</b> mede a amplitude da faixa central que concentra exatamente <b>50% das observações</b>
+            de uma variável (descartando os 25% menores e os 25% maiores valores da amostra):
+        </p>
+        <div class="formula-box">
+            IQR = Q₃ − Q₁, &nbsp;&nbsp;onde Q₁ = Percentil 25% &nbsp;e&nbsp; Q₃ = Percentil 75%
+        </div>
+
+        <h3>Método Explícito de Cálculo dos Quartis</h3>
+        <p>
+            Para garantir total consistência com os quartis e o Boxplot construídos na aba de Medidas de Tendência Central
+            (<code>analises/mtc.py</code>), utilizou-se o método de <b>interpolação linear padrão do NumPy/Pandas</b>
+            (<code>pandas.Series.quantile(q, interpolation="linear")</code>, correspondente à definição <b>Tipo 7 de Hyndman &amp; Fan</b>),
+            em que o índice virtual é dado por <code>h = 1 + (n − 1) · q</code> e, quando <code>h</code> não é inteiro, interpola-se
+            linearmente entre as duas observações adjacentes ordenadas.
+        </p>
+    </section>
+
+    <h2>2. Tabela Lado a Lado (Q₁, Mediana, Q₃ e IQR) e Interpretação Prática — {{ time_selecionado }}</h2>
 
     <div>
-        <!-- Aqui serão exibidos os gráficos -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Unidade</th>
+                    <th>1º Quartil (Q₁)</th>
+                    <th>Mediana (Q₂)</th>
+                    <th>3º Quartil (Q₃)</th>
+                    <th>IQR (Q₃ − Q₁)</th>
+                    <th>Interpretação Prática (Faixa Central de 50% dos Jogos)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, valores in estatIqr.items() %}
+                <tr>
+                    <td><b>{{ valores.nome_exibicao }}</b></td>
+                    <td>{{ valores.unidade }}</td>
+                    <td>{{ valores.q1 }}</td>
+                    <td>{{ valores.mediana }}</td>
+                    <td>{{ valores.q3 }}</td>
+                    <td><b>{{ valores.iqr }}</b></td>
+                    <td>{{ valores.interpretacao_faixa }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
+    <section class="explicacao-teste" style="margin-top: 24px;">
+        <div class="explicacao-teste-titulo">O que um IQR Alto ou Baixo Significa na Prática?</div>
+        <p>
+            O IQR representa a <b>largura da zona de normalidade</b> do time (metade central das partidas da temporada):
+        </p>
+        <ul>
+            <li>
+                <b>No Cleveland Cavaliers:</b> Metade dos jogos da equipe teve pontuação entre <code>111,25</code> e <code>129,00 pts</code>
+                (<code>IQR = 17,75 pts</code>), enquanto <b>Roubos de Bola</b> (<code>IQR = 3,00</code>, entre 7 e 10 roubos) e
+                <b>Bloqueios</b> (<code>IQR = 2,75</code>, entre 4,00 e 6,75 bloqueios) variam dentro de uma janela estreita nos jogos típicos.
+            </li>
+            <li>
+                <b>No Brooklyn Nets:</b> Os 50% centrais das partidas concentraram-se entre <code>99,00</code> e <code>113,00 pts</code>
+                (<code>IQR = 14,00 pts</code>), mostrando uma faixa central de pontuação mais compacta que a do Cavaliers, enquanto
+                <b>Faltas Pessoais</b> variou entre <code>18,00</code> e <code>24,00 faltas</code> (<code>IQR = 6,00</code>).
+            </li>
+        </ul>
+    </section>
+
+    <h2>3. Comparação do IQR com Amplitude Total e Desvio Padrão (Robustez) — {{ time_selecionado }}</h2>
+
+    <div class="grafico-container">
+        {{ graficoRobustez | safe }}
+    </div>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Mínimo</th>
+                    <th>Máximo</th>
+                    <th>Amplitude Total (Máx − Mín)</th>
+                    <th>IQR (Q₃ − Q₁)</th>
+                    <th>Razão Amplitude / IQR</th>
+                    <th>Desvio Padrão (s)</th>
+                    <th>Razão s / IQR</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, valores in estatIqr.items() %}
+                <tr>
+                    <td><b>{{ valores.nome_exibicao }}</b></td>
+                    <td>{{ valores.menor }}</td>
+                    <td>{{ valores.maior }}</td>
+                    <td>{{ valores.amplitude }}</td>
+                    <td><b>{{ valores.iqr }}</b></td>
+                    <td><b>{{ valores.razao_amp_iqr }}</b></td>
+                    <td>{{ valores.desvio_padrao }}</td>
+                    <td>{{ valores.razao_dp_iqr }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <section class="explicacao-teste" style="margin-top: 24px;">
+        <div class="explicacao-teste-titulo">Por que a Amplitude e o Desvio Padrão Inflam Enquanto o IQR Permanece Estável?</div>
+        <ul>
+            <li>
+                <b>Onde a Amplitude é muito maior que o IQR (Sensibilidade aos extremos):</b> A amplitude depende exclusivamente dos dois valores mais extremos
+                (<code>Máx − Mín</code>). No <b>Cleveland Cavaliers</b>, em <b>Roubos de Bola (STL)</b> a amplitude (<code>14,00</code>) é <b>4,67 vezes maior</b>
+                que o IQR (<code>3,00</code>), e em <b>Bloqueios (BLK)</b> a amplitude (<code>11,00</code>) é <b>4,00 vezes maior</b> que o IQR (<code>2,75</code>),
+                porque partidas isoladas com 15–17 roubos ou 11 tocos esticam o máximo sem alterar a metade central. Já no <b>Brooklyn Nets</b>, o destaque é
+                <b>Pontos (PTS)</b>: a amplitude total atinge <code>63,00 pts</code> (<b>4,50× o IQR</b> de <code>14,00 pts</code>) e <b>Total de Rebotes</b> atinge
+                <code>33,00 reb</code> (<b>4,12× o IQR</b> de <code>8,00 reb</code>), puxados por jogos atípicos de 66 e 77 pontos ou 58 rebotes.
+            </li>
+            <li>
+                <b>Onde o Desvio Padrão (s) é inflado por valores extremos enquanto o IQR resiste:</b> Em uma distribuição normal sem outliers, a relação teórica é
+                <code>s / IQR ≈ 0,74</code>. Entretanto, nas variáveis com outliers — como <b>Roubos de Bola</b> no Cavaliers (<code>s / IQR = 0,96</code>, onde
+                <code>s = 2,89</code> quase empata com <code>IQR = 3,00</code>), <b>Bloqueios</b> no Cavaliers (<code>s / IQR = 0,90</code>) e <b>Pontos</b> no Nets
+                (<code>s / IQR = 0,84</code>, com <code>s = 11,80</code> frente a <code>IQR = 14,00</code>) — os desvios quadráticos <code>(xᵢ − x̄)²</code> dos jogos
+                extremos inflam o desvio padrão, enquanto o <b>IQR possui ponto de ruptura (breakdown point) de 25% em cada cauda</b>, mantendo-se imune a esses valores.
+            </li>
+        </ul>
+    </section>
+
+    <h2>4. Regra de Detecção de Outliers (1,5 × IQR vs. 3,0 × IQR) e Conferência com o Boxplot ({{ time_selecionado }})</h2>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Cercas Internas (1,5 × IQR)<br><small>[Q₁ − 1,5·IQR ; Q₃ + 1,5·IQR]</small></th>
+                    <th>Outliers Moderados (1,5 × IQR)<br><small>(Qtd e Valores)</small></th>
+                    <th>Cercas Externas (3,0 × IQR)<br><small>[Q₁ − 3,0·IQR ; Q₃ + 3,0·IQR]</small></th>
+                    <th>Outliers Extremos (3,0 × IQR)<br><small>(Qtd e Valores)</small></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, valores in estatIqr.items() %}
+                <tr>
+                    <td><b>{{ valores.nome_exibicao }}</b></td>
+                    <td>[ {{ valores.lim_inf_15 }} ; {{ valores.lim_sup_15 }} ]</td>
+                    <td>
+                        {% if valores.qtd_outliers_15 > 0 %}
+                            <span class="badge badge-outlier">{{ valores.qtd_outliers_15 }}: [ {{ valores.outliers_15_str }} ]</span>
+                        {% else %}
+                            <span class="badge badge-concentrado">Nenhum (0)</span>
+                        {% endif %}
+                    </td>
+                    <td>[ {{ valores.lim_inf_30 }} ; {{ valores.lim_sup_30 }} ]</td>
+                    <td>
+                        {% if valores.qtd_outliers_30 > 0 %}
+                            <span class="badge badge-outlier">{{ valores.qtd_outliers_30 }}: [ {{ valores.outliers_30_str }} ]</span>
+                        {% else %}
+                            <span class="badge badge-concentrado">Nenhum (0)</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <section class="explicacao-teste" style="margin-top: 24px;">
+        <div class="explicacao-teste-titulo">Justificativa do Critério Adotado e Conferência com o Boxplot</div>
+        <p>
+            Adotou-se no projeto o critério clássico das <b>cercas internas de Tukey (<code>k = 1,5 × IQR</code>)</b> para a identificação de outliers no Boxplot,
+            pois em distribuições próximas da normalidade esse intervalo abrange aproximadamente <b>99,3% dos dados</b> (~2,7 desvios padrão), sinalizando como
+            outliers partidas genuinamente atípicas sem descartar variações normais de jogo. Já o critério <code>k = 3,0 × IQR</code> (cercas externas) detecta
+            apenas anomalias severas ou erros grosseiros de registro — e, como mostra a tabela acima, <b>nenhuma partida ultrapassa <code>3,0 × IQR</code></b>
+            em nenhum dos dois times, confirmando que os outliers observados são desempenhos esportivos reais (ex.: <code>15, 15 e 17</code> roubos de bola e
+            <code>11</code> bloqueios no Cavaliers; <code>66 e 77</code> pontos e <code>58</code> rebotes no Nets).
+        </p>
+        <p>
+            <b>Conferência com o Boxplot (Aba MTC):</b> Como os limites <code>Q₁ − 1,5·IQR</code> e <code>Q₃ + 1,5·IQR</code> recalculados acima utilizam exatamente
+            a mesma interpolação linear de <code>analises/mtc.py</code>, <b>há 100% de coincidência (zero divergência)</b> entre os outliers listados nesta tabela
+            e os pontos pretos plotados fora das hastes do Boxplot.
+        </p>
+    </section>
+
+    <h2>5. Quadro-Resumo do IQR (Linhas = Variáveis, Colunas = Times, Células = IQR) e Articulação Final</h2>
+
+    <div class="grafico-container">
+        {{ graficoComparativo | safe }}
+    </div>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Unidade</th>
+                    <th>Cleveland Cavaliers — IQR<br><small>(Faixa Q₁ – Q₃)</small></th>
+                    <th>Brooklyn Nets — IQR<br><small>(Faixa Q₁ – Q₃)</small></th>
+                    <th>Diferença de IQR</th>
+                    <th>Mais Concentrado (Menor IQR)</th>
+                    <th>Mais Espalhado (Maior IQR)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, q in quadroResumo.items() %}
+                <tr>
+                    <td><b>{{ q.nome_exibicao }}</b></td>
+                    <td>{{ q.unidade }}</td>
+                    <td><b>{{ q.cavs_iqr }}</b> <span style="color:#64748B; font-size:12px;">{{ q.cavs_faixa }}</span></td>
+                    <td><b>{{ q.nets_iqr }}</b> <span style="color:#64748B; font-size:12px;">{{ q.nets_faixa }}</span></td>
+                    <td>{{ q.diferenca }}</td>
+                    <td>
+                        {% if "Empate" in q.mais_concentrado %}
+                            <span class="badge badge-empate">{{ q.mais_concentrado }}</span>
+                        {% else %}
+                            <span class="badge badge-concentrado">{{ q.mais_concentrado }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if "Empate" in q.mais_espalhado %}
+                            <span class="badge badge-empate">{{ q.mais_espalhado }}</span>
+                        {% else %}
+                            <span class="badge badge-espalhado">{{ q.mais_espalhado }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <section class="explicacao-teste" style="margin-top: 24px;">
+        <div class="explicacao-teste-titulo">Síntese Integrada: Articulando IQR, Coeficiente de Variação (CV) e Assimetria (G₁)</div>
+        <ul>
+            <li>
+                <b>O padrão de concentração central muda entre as variáveis (Divisão 3 × 3 + 1 empate):</b> Diferentemente do CV (onde o Cavaliers teve menor
+                dispersão relativa em 6 das 7 variáveis), no <b>IQR</b> o comportamento se divide por natureza da estatística:
+                o <b>Brooklyn Nets é mais concentrado nos 50% centrais</b> nas variáveis de volume ofensivo e reboteiro — <b>Pontos</b> (<code>14,00</code> vs.
+                <code>17,75</code>), <b>Total de Rebotes</b> (<code>8,00</code> vs. <code>9,00</code>) e <b>Cestas de 3 Pontos</b> (<code>4,50</code> vs.
+                <code>5,00</code>); o <b>Cleveland Cavaliers é mais concentrado</b> nas variáveis defensivas e disciplinares — <b>Roubos de Bola</b>
+                (<code>3,00</code> vs. <code>5,00</code>), <b>Bloqueios</b> (<code>2,75</code> vs. <code>4,00</code>) e <b>Faltas Pessoais</b>
+                (<code>5,00</code> vs. <code>6,00</code>); e há <b>empate exato em Assistências</b> (<code>IQR = 7,00</code> em ambos).
+            </li>
+            <li>
+                <b>Conexão crucial entre IQR, CV e Assimetria em Pontos e Rebotes do Brooklyn Nets:</b> Por que o <b>Brooklyn Nets</b> apresentou um
+                <b>CV mais alto (pior)</b> em Pontos (<code>11,10%</code> vs. <code>10,50%</code>) e Rebotes (<code>16,77%</code> vs. <code>15,76%</code>) se a sua
+                faixa central de 50% dos jogos (<b>IQR</b>) é na verdade <b>mais estreita e concentrada</b> (<code>14,00</code> vs. <code>17,75 pts</code>)?
+                A resposta vem da <b>Assimetria negativa</b> (<code>G₁ = -0,44</code> em Pontos) e dos <b>outliers na cauda inferior</b> (jogos de 66 e 77 pontos)
+                combinados à média menor do Nets (<code>106,31</code> vs. <code>119,39 pts</code>): os apagões ofensivos inflaram o desvio padrão <code>s</code> e a
+                média baixa elevou o <code>CV = s / x̄</code>, enquanto o <b>IQR (medida robusta)</b> filtrou as caudas e revelou que, nas partidas normais,
+                o Nets oscila dentro de uma faixa mais curta de pontuação.
+            </li>
+            <li>
+                <b>Confirmação em Faltas Pessoais (PF):</b> No <b>Brooklyn Nets</b>, onde a assimetria foi a mais alta do estudo (<code>G₁ = +0,60</code>, moderada),
+                o IQR (<code>6,00 faltas</code>) é maior que o do Cavaliers (<code>5,00 faltas</code>), demonstrando que na variável com maior assimetria o IQR
+                descreve a dispersão real entre jogos de forma mais transparente e imune a distorções de escala do que o CV isolado.
+            </li>
+        </ul>
+    </section>
 
 {% endblock %}
