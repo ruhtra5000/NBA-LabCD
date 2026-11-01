@@ -15,6 +15,12 @@ from analises.cv import (
     graficoDesvioVsCv,
     graficoComparativoCvTimes,
 )
+from analises.iqr import (
+    calcularIqrTime,
+    quadroResumoIqr,
+    graficoIqrVsAmplitudeDesvio,
+    graficoComparativoIqrTimes,
+)
 
 # Inicializações
 app = Flask(__name__)
@@ -101,9 +107,25 @@ def coefVariacao(time: str):
 
 @app.route("/iqr/<time>")
 def intervInterquartil(time: str):
+    estatIqr = calcularIqrTime(df, time)
+    quadroResumo = quadroResumoIqr(df)
+
+    graficoRobustez = graficoIqrVsAmplitudeDesvio(df, time).to_html(
+        full_html=False,
+        include_plotlyjs="cdn"
+    )
+    graficoComparativo = graficoComparativoIqrTimes(df).to_html(
+        full_html=False,
+        include_plotlyjs=False
+    )
+
     return render_template(
         "iqr.html",
         time_selecionado=time,
+        estatIqr=estatIqr,
+        quadroResumo=quadroResumo,
+        graficoRobustez=graficoRobustez,
+        graficoComparativo=graficoComparativo,
     )
 
 
