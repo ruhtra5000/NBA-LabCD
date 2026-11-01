@@ -1,7 +1,14 @@
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from analises.tratamento import tratamentoPrevioBase, imprimirQualidadeDados
 from analises.mtc import *
+from analises.assimetria import (
+    METADADOS_VARIAVEIS,
+    calcularAssimetria,
+    compararAssimetriaTimes,
+    graficoHistKdeBoxplot,
+    graficoComparativoAssimetria,
+)
 
 # Inicializações
 app = Flask(__name__)
@@ -36,9 +43,31 @@ def medidasTendCentral(time: str):
 
 @app.route("/assimetria/<time>")
 def assimetria(time: str):
+    variavel_selecionada = request.args.get("variavel", "pontos")
+    if variavel_selecionada not in METADADOS_VARIAVEIS:
+        variavel_selecionada = "pontos"
+
+    estatAssimetria = calcularAssimetria(df, time)
+    comparativoTimes = compararAssimetriaTimes(df)
+
+    graficoDistribuicao = graficoHistKdeBoxplot(df, time, variavel_selecionada).to_html(
+        full_html=False,
+        include_plotlyjs="cdn"
+    )
+    graficoComparativo = graficoComparativoAssimetria(df).to_html(
+        full_html=False,
+        include_plotlyjs=False
+    )
+
     return render_template(
         "assimetria.html",
         time_selecionado=time,
+        variavel_selecionada=variavel_selecionada,
+        metadados_variaveis=METADADOS_VARIAVEIS,
+        estatAssimetria=estatAssimetria,
+        comparativoTimes=comparativoTimes,
+        graficoDistribuicao=graficoDistribuicao,
+        graficoComparativo=graficoComparativo,
     )
 
 @app.route("/cv/<time>")
