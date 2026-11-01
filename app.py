@@ -9,6 +9,12 @@ from analises.assimetria import (
     graficoHistKdeBoxplot,
     graficoComparativoAssimetria,
 )
+from analises.cv import (
+    calcularCvTime,
+    quadroResumoCv,
+    graficoDesvioVsCv,
+    graficoComparativoCvTimes,
+)
 
 # Inicializações
 app = Flask(__name__)
@@ -72,9 +78,25 @@ def assimetria(time: str):
 
 @app.route("/cv/<time>")
 def coefVariacao(time: str):
+    estatCv = calcularCvTime(df, time)
+    quadroResumo = quadroResumoCv(df)
+
+    graficoEscalas = graficoDesvioVsCv(df, time).to_html(
+        full_html=False,
+        include_plotlyjs="cdn"
+    )
+    graficoComparativo = graficoComparativoCvTimes(df).to_html(
+        full_html=False,
+        include_plotlyjs=False
+    )
+
     return render_template(
         "cv.html",
         time_selecionado=time,
+        estatCv=estatCv,
+        quadroResumo=quadroResumo,
+        graficoEscalas=graficoEscalas,
+        graficoComparativo=graficoComparativo,
     )
 
 @app.route("/iqr/<time>")
