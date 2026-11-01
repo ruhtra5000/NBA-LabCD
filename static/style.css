@@ -1,20 +1,256 @@
-table {
-    border-collapse: collapse;
+/* GERAL */
+@font-face {
+    font-family: 'Google Sans';
+    src: url('/static/fonts/GoogleSansFlex.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
 }
 
-tr {
-    border-bottom: 1pt solid black;
+body {
+    font-family: 'Google Sans', sans-serif;
+    background-color: #F5F6F8;
+    padding-top: 72px;
+}
+
+main {
+    width: 70%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 0;
+}
+
+h2 {
+    padding-top: 20px;
+}
+
+h3 {
+    padding-top: 10px;
+}
+
+p {
+    text-align: justify;
+    font-size: 13pt;
+}
+
+li {
+    font-size: 13pt;
+    margin-top: 3px;
+    text-align: justify;
+}
+
+/* TABELAS */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    background-color: #FFFFFF;
+
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+thead {
+    background-color: #F9FAFB;
+}
+
+th {
+    padding: 16px;
+    text-align: left;
+
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+
+    border-bottom: 1px solid #E5E7EB;
+}
+
+td {
+    padding: 15px 16px;
+
+    color: #1F2937;
+    font-size: 14px;
+
+    border-bottom: 1px solid #F1F3F5;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background-color: #F9FAFB;
+}
+
+/* NAVBAR */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 72px;
+
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB;
+
+    z-index: 1000;
+}
+
+.navbar-container {
+    max-width: 1400px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    text-decoration: none;
+    color: #1F2937;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #64748B;
+    font-size: 14px;
+    font-weight: 500;
+
+    transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: #4F46E5;
+}
+
+.nav-links a.active {
+    color: #4F46E5;
+    font-weight: 600;
+}
+
+/* SELEÇÃO DOS TIMES */
+.selecao-times {
+    width: 100%;
+}
+
+
+.botoes-times {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
 }
 
 .botao-time {
-    padding: 12px 20px;
-    background-color: #263b5e;
-    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+    min-height: 80px;
+    padding: 24px;
+
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+
+    color: #1F2937;
     text-decoration: none;
-    border-radius: 6px;
+    font-size: 17px;
+    font-weight: 600;
+
+    transition: all 0.2s ease;
+}
+
+.botao-time img {
+    width: 65px;
+    height: 65px;
+    object-fit: contain;
+
+    filter: grayscale(100%);
+    transition: transform 0.2s ease;
+}
+
+.botao-time:hover {
+    border-color: #A5B4FC;
+    background-color: #FAFAFF;
+    transform: translateY(-2px);
+}
+
+.botao-time:hover img {
+    transform: scale(1.08);
 }
 
 .botao-time.selecionado {
-    background-color: #e67e22;
-    font-weight: bold;
+    border: 2px solid #4F46E5;
+    background-color: #F5F5FF;
+    color: #4338CA;
+}
+
+.botao-time.selecionado img {
+    filter: grayscale(100%);
+}
+
+@media (max-width: 600px) {
+    .botoes-times {
+        grid-template-columns: 1fr;
+    }
+
+    .botao-time {
+        min-height: 100px;
+    }
+}
+
+/* CARDS EXPLICAÇÃO */
+.explicacao-teste {
+    width: 100%;
+    box-sizing: border-box;
+
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+
+    padding: 28px;
+    margin-bottom: 24px;
+}
+
+.explicacao-teste .explicacao-teste-titulo {
+    font-size: 23px;
+    font-weight: 600;
+}
+
+.explicacao-teste h3 {
+    color: #1F2937;
+    font-size: 17px;
+    font-weight: 600;
+
+    margin-top: 20px;
+    margin-bottom: 12px;
+}
+
+.explicacao-teste h3:first-child {
+    margin-top: 0;
+}
+
+.explicacao-teste p {
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.8;
+
+    margin-bottom: 14px;
+}
+
+.explicacao-teste p:last-child {
+    margin-bottom: 0;
 }

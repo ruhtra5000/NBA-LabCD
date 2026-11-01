@@ -13,17 +13,41 @@
 </head>
 
 <body>
+    <header class="navbar">
+        <div class="navbar-container">
 
-    <header>
-        <h1>Projeto de Laboratório de Ciência de Dados</h1>
+            <a href="{{ url_for('inicio') }}" class="logo">
+                <span>Laboratório de Ciência de Dados</span>
+            </a>
 
-        <nav>
-            <a href="{{ url_for('inicio') }}">Home</a>
-            <a href="{{ url_for('medidasTendCentral', time='Cleveland Cavaliers') }}">Medidas de Têndencia Central</a>
-            <a href="{{ url_for('assimetria', time='Cleveland Cavaliers') }}">Assimetria</a>
-            <a href="{{ url_for('coefVariacao', time='Cleveland Cavaliers') }}">Coeficiente de Variação</a>
-            <a href="{{ url_for('intervInterquartil', time='Cleveland Cavaliers') }}">Intervalo Interquartil</a>
-        </nav>
+            <nav class="nav-links">
+                <a href="{{ url_for('inicio') }}"
+                class="{% if request.endpoint == 'inicio' %}active{% endif %}">
+                    Início
+                </a>
+
+                <a href="{{ url_for('medidasTendCentral', time='Cleveland Cavaliers') }}"
+                class="{% if request.endpoint == 'medidasTendCentral' %}active{% endif %}">
+                    Medidas de Tendência Central
+                </a>
+
+                <a href="{{ url_for('assimetria', time='Cleveland Cavaliers') }}"
+                class="{% if request.endpoint == 'assimetria' %}active{% endif %}">
+                    Assimetria
+                </a>
+
+                <a href="{{ url_for('coefVariacao', time='Cleveland Cavaliers') }}"
+                class="{% if request.endpoint == 'coefVariacao' %}active{% endif %}">
+                    Coeficiente de Variação
+                </a>
+
+                <a href="{{ url_for('intervInterquartil', time='Cleveland Cavaliers') }}"
+                class="{% if request.endpoint == 'intervInterquartil' %}active{% endif %}">
+                    Intervalo Interquartil
+                </a>
+            </nav>
+
+        </div>
     </header>
 
     <main>

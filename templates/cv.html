@@ -8,19 +8,31 @@ Coeficiente de Variação
 
     <h1>Coeficiente de Variação</h1>
 
-    <h2>Selecione uma equipe</h2>
+    <section class="selecao-times">
+        <h2>Selecione uma equipe</h2>
 
-    <div class="botoes-times">
-        <a href="{{ url_for('coefVariacao', time='Cleveland Cavaliers') }}"
-        class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
-            Cleveland Cavaliers
-        </a>
+        <div class="botoes-times">
 
-        <a href="{{ url_for('coefVariacao', time='Brooklyn Nets') }}"
-        class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
-            Brooklyn Nets
-        </a>
-    </div>
+            <a href="{{ url_for('coefVariacao', time='Cleveland Cavaliers') }}"
+            class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
+
+                <img src="{{ url_for('static', filename='images/cavaliers.png') }}"
+                    alt="Logo Cleveland Cavaliers">
+
+                <span>Cleveland Cavaliers</span>
+            </a>
+
+            <a href="{{ url_for('coefVariacao', time='Brooklyn Nets') }}"
+            class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
+
+                <img src="{{ url_for('static', filename='images/nets.png') }}"
+                    alt="Logo Brooklyn Nets">
+
+                <span>Brooklyn Nets</span>
+            </a>
+
+        </div>
+    </section>
 
     <p>Teste</p>
 
