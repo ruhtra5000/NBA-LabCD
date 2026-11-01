@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Homepage
+Lab. de Ciência de Dados
 {% endblock %}
 
 {% block content %}
@@ -15,12 +15,17 @@ Homepage
         .binaria { color: #c0392b; }
     </style>
 
-    <h2>Informações iniciais</h2>
+    <h1>Informações iniciais</h1>
 
     <p>
-        Base de dados contendo estatísticas individuais das equipes da NBA por partida, 
+        Projeto feito sob uma base de dados contendo estatísticas individuais das equipes da NBA por partida, 
         incluindo resultados, desempenho ofensivo e defensivo e aproveitamento ao longo 
-        da temporada. A base completa é composta por 28 colunas e 2238 registros de partida.
+        da temporada. A base completa é composta por <u>28 colunas</u> e <u>2238 registros de partida</u>.
+    </p>
+
+    <p>
+        As análises aqui apresentadas foram feitas em cima dos dados dos times: <b>Cleveland Cavaliers</b> e
+        <b>Brooklyn Nets</b>.
     </p>
 
     <p>
@@ -250,6 +255,121 @@ Homepage
 
     <h2>Métodos e análise de valores ausentes e inconsistências</h2>
 
-    <p>a</p>
+    <p>
+        Após análise completa da base de dados, pode-se concluir que os dados tem uma ótima qualidade, 
+        pois os tipos dos dados estão, de forma geral, corretos, e, além disso, <b>NÃO</b> foram encontrados:
+    </p>
+
+    <ul>
+        <li>Valores ausentes em nenhuma coluna;</li>
+        <li>Registros de partida duplicados;</li>
+        <li>Valores negativos em colunas númericas;</li>
+        <li>Valores inconsistentes em colunas que indicam percentuais;</li>
+        <li>Soma total de rebotes incorreta;</li>
+        <li>Arremessos, cestas de três pontos e lances livres convertidos maiores que os tentados.</li>
+    </ul>
+
+    <h3>MCAR, MAR, MNAR</h3>
+
+    <p>
+        Se houvessem valores ausentes na base, os mecanismos de análise MCAR, MAR e MNAR poderiam nos 
+        dar indícios da razão pela qual eles estão ausentes.
+    </p>
+    
+    <ul>
+        <li>
+            <b>MCAR (Missing Completely At Random):</b> Os valores estão ausentes por motivos totalmente 
+            independentes das características observadas ou não observadas dos dados. Portanto, a ausência 
+            não introduz um viés sistemático na amostra, embora reduza a quantidade de dados disponíveis.
+        </li>
+        <li>
+            <b>MAR (Missing At Random):</b> A probabilidade de um valor estar ausente depende de outras 
+            informações observadas no conjunto de dados, mas não depende do próprio valor ausente depois 
+            de considerar essas informações. Portanto, é possível utilizar outras variáveis observadas para 
+            ajudar a estimar os valores ausentes.
+        </li>
+        <li>
+            <b>MNAR (Missing Not At Random):</b> A probabilidade de um valor estar ausente depende do próprio 
+            valor que está faltando, mesmo depois de considerar as demais informações observadas. Portanto, é 
+            o mecanismo mais difícil de tratar, pois as informações necessárias para explicar a ausência não 
+            estão completamente disponíveis na própria base.
+        </li>
+    </ul>
+
+    <h3>Métodos de investigação de mecanismo de ausência de dados</h3>
+
+    <section class="explicacao-teste">
+        <div class="explicacao-teste-titulo">Teste de Little</div>
+
+        <h3>Como utilizar</h3>
+        <p>
+            Identifica os diferentes padrões de ausência e compara as
+            características estatísticas dos grupos de observações,
+            utilizando uma estatística qui-quadrado e um p-valor.
+        </p>
+
+        <h3>Por que utilizar</h3>
+        <p>
+            Permite avaliar se os dados são compatíveis com o mecanismo MCAR,
+            sendo uma das principais ferramentas para investigar a ausência
+            completamente aleatória.
+        </p>
+    </section>
+
+
+    <section class="explicacao-teste">
+        <div class="explicacao-teste-titulo">Teste de Jamshidian-Jalal</div>
+
+        <h3>Como utilizar</h3>
+        <p>
+            Utiliza procedimentos de imputação e testes complementares
+            para avaliar a distribuição dos dados e a homogeneidade das
+            matrizes de covariância entre os padrões de ausência.
+        </p>
+
+        <h3>Por que utilizar</h3>
+        <p>
+            É uma alternativa ao teste de Little, especialmente útil quando
+            existe suspeita de que os dados não seguem uma distribuição
+            normal multivariada.
+        </p>
+    </section>
+
+
+    <section class="explicacao-teste">
+        <div class="explicacao-teste-titulo">Teste de Listing e Schlittgen (LS)</div>
+
+        <h3>Como utilizar</h3>
+        <p>
+            Compara as características dos participantes que abandonaram
+            um estudo longitudinal com aquelas dos participantes que
+            permaneceram, considerando os diferentes momentos de abandono.
+        </p>
+
+        <h3>Por que utilizar</h3>
+        <p>
+            Permite investigar se a desistência dos participantes ocorre
+            aleatoriamente, ajudando a identificar possíveis vieses em
+            pesquisas longitudinais.
+        </p>
+    </section>
+
+
+    <section class="explicacao-teste">
+        <div class="explicacao-teste-titulo">Regressão Logística de Fairclough</div>
+
+        <h3>Como utilizar</h3>
+        <p>
+            Cria uma variável indicadora de ausência (1 para ausente e 0 para
+            observado) e utiliza a regressão logística para investigar sua
+            relação com outras variáveis disponíveis.
+        </p>
+
+        <h3>Por que utilizar</h3>
+        <p>
+            Permite identificar características associadas à probabilidade
+            de ausência, auxiliando na investigação de possíveis mecanismos MAR.
+        </p>
+    </section>
 
 {% endblock %}
