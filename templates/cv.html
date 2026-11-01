@@ -6,7 +6,56 @@ Coeficiente de Variação
 
 {% block content %}
 
-    <h1>Coeficiente de Variação</h1>
+    <style>
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-consistente {
+            background-color: #F0FDF4;
+            color: #15803D;
+        }
+
+        .badge-moderado {
+            background-color: #EFF6FF;
+            color: #1D4ED8;
+        }
+
+        .badge-disperso {
+            background-color: #FFFBEB;
+            color: #B45309;
+        }
+
+        .badge-alerta {
+            background-color: #FEF2F2;
+            color: #B91C1C;
+        }
+
+        .formula-box {
+            background-color: #F8FAFC;
+            border-left: 4px solid #4F46E5;
+            padding: 14px 18px;
+            margin: 12px 0;
+            font-family: monospace;
+            font-size: 14px;
+            color: #1E293B;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .grafico-container {
+            background-color: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+    </style>
+
+    <h1>Coeficiente de Variação (CV)</h1>
 
     <section class="selecao-times">
         <h2>Selecione uma equipe</h2>
@@ -34,10 +83,238 @@ Coeficiente de Variação
         </div>
     </section>
 
-    <p>Teste</p>
+    <h2>1. Fórmula Explícita e Condições de Validade do CV</h2>
+
+    <section class="explicacao-teste">
+        <div class="explicacao-teste-titulo">Definição Matemática e Convenção Adotada</div>
+
+        <h3>Fórmula Utilizada</h3>
+        <p>
+            O <b>Coeficiente de Variação (CV)</b> mede a dispersão relativa de uma variável como a razão entre o
+            <b>desvio padrão amostral (<code>s</code>, com denominador <code>n − 1</code>)</b> e a <b>média amostral (<code>x̄</code>)</b>,
+            mantendo a mesma convenção adotada em todas as medidas descritivas do projeto (<code>pandas.Series.std(ddof=1)</code>).
+            Apresentamos o resultado tanto em <b>fração adimensional</b> quanto em <b>percentual (%)</b> com 2 casas decimais:
+        </p>
+        <div class="formula-box">
+            CV (fração) = s / x̄ &nbsp;&nbsp;|&nbsp;&nbsp; CV (%) = (s / x̄) × 100%, &nbsp;&nbsp;onde s = √[ (1 / (n - 1)) ∑ (xᵢ - x̄)² ]
+        </div>
+
+        <h3>Verificação das Condições de Validade e Inflação em Médias Pequenas (BLK e STL)</h3>
+        <ul>
+            <li>
+                <b>Escala de Razão e Positividade:</b> Todas as 7 variáveis analisadas (Pontos, Rebotes, Assistências, Roubos de Bola, Bloqueios,
+                Faltas Pessoais e Cestas de 3 Pontos) estão em <b>escala de razão</b>: possuem zero absoluto físico (ausência total do evento na partida)
+                e assumem exclusivamente valores não-negativos, com médias estritamente positivas (<code>x̄ &gt; 0</code>).
+            </li>
+            <li>
+                <b>Por que o CV fica inflado em Bloqueios (BLK) e Roubos de Bola (STL)?</b> Nas variáveis de grande volume — como
+                <b>Pontos</b> (<code>x̄ ≈ 106 a 119 pts</code>) e <b>Rebotes</b> (<code>x̄ ≈ 40 a 44 reb</code>) — a média está suficientemente distante de zero.
+                Porém, em <b>Bloqueios (BLK)</b> (<code>x̄ = 5,03</code> no Cavaliers e <code>4,28</code> no Nets) e <b>Roubos de Bola (STL)</b>
+                (<code>x̄ = 8,57</code> no Cavaliers e <code>7,95</code> no Nets), a média está próxima de zero. Como <code>x̄</code> está no denominador de
+                <code>CV = (s / x̄) × 100</code>, uma oscilação natural de apenas ±2 tocos ou roubos de bola entre um jogo e outro representa de 35% a 55%
+                da média, inflando mecanicamente o CV. Por isso, o CV alto em BLK e STL deve ser interpretado com cautela.
+            </li>
+        </ul>
+    </section>
+
+    <h2>2. Resultados do Coeficiente de Variação — {{ time_selecionado }}</h2>
 
     <div>
-        <!-- Aqui serão exibidos os gráficos -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Unidade Original</th>
+                    <th>Média Amostral (x̄)</th>
+                    <th>Desvio Padrão Amostral (s)</th>
+                    <th>CV (Fração)</th>
+                    <th>CV (%)</th>
+                    <th>Condição de Validade</th>
+                    <th>Interpretação Prática (Regularidade)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, valores in estatCv.items() %}
+                <tr>
+                    <td><b>{{ valores.nome_exibicao }}</b></td>
+                    <td>{{ valores.unidade }}</td>
+                    <td>{{ valores.media }}</td>
+                    <td>{{ valores.desvio_padrao }}</td>
+                    <td>{{ valores.cv_fracao }}</td>
+                    <td><b>{{ valores.cv_pct }}</b></td>
+                    <td>
+                        {% if "Cautela" in valores.validade %}
+                            <span class="badge badge-alerta">{{ valores.validade }}</span>
+                        {% else %}
+                            <span class="badge badge-consistente">{{ valores.validade }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if "Alta consistência" in valores.classificacao %}
+                            <span class="badge badge-consistente">{{ valores.classificacao }}</span>
+                        {% elif "moderada" in valores.classificacao %}
+                            <span class="badge badge-moderado">{{ valores.classificacao }}</span>
+                        {% else %}
+                            <span class="badge badge-disperso">{{ valores.classificacao }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
+    <section class="explicacao-teste" style="margin-top: 24px;">
+        <div class="explicacao-teste-titulo">Interpretação Prática dos Valores de CV ({{ time_selecionado }})</div>
+        <ul>
+            <li>
+                <b>Variáveis de Alta Consistência (CV ≤ 15%):</b> <b>Pontos (PTS)</b> apresenta o menor CV em ambas as equipes
+                (<code>10,50%</code> no Cavaliers e <code>11,10%</code> no Nets). Em termos práticos, isso significa que a produção ofensiva total do time é
+                altamente previsível e regular de um jogo para outro, oscilando cerca de apenas ~10% a 11% em torno de sua média.
+            </li>
+            <li>
+                <b>Variáveis de Regularidade Moderada (15% &lt; CV ≤ 30%):</b> <b>Total de Rebotes (REB)</b> (<code>15,76%</code> / <code>16,77%</code>),
+                <b>Assistências (AST)</b> (<code>18,24%</code> / <code>18,38%</code>), <b>Faltas Pessoais (PF)</b> (<code>20,73%</code> / <code>20,18%</code>) e
+                <b>Cestas de 3 Pontos (FG3M)</b> (<code>22,67%</code> / <code>24,04%</code>) exibem variação moderada. Destaca-se que as bolas de 3 pontos
+                são mais voláteis que os pontos totais, pois quando o aproveitamento do perímetro cai em uma partida, as equipes compensam pontuando no garrafão
+                e nos lances livres.
+            </li>
+            <li>
+                <b>Variáveis de Alta Dispersão Relativa (CV &gt; 30%):</b> <b>Roubos de Bola (STL)</b> (<code>33,69%</code> / <code>37,86%</code>) e
+                <b>Bloqueios (BLK)</b> (<code>49,06%</code> / <code>54,13%</code>) são muito irregulares de partida para partida, tanto pela dependência do estilo
+                de ataque adversário quanto pelo efeito matemático da média reduzida.
+            </li>
+        </ul>
+    </section>
+
+    <h2>3. Comparação entre Escalas Diferentes: Desvio Padrão Bruto (s) vs. CV (%)</h2>
+
+    <div class="grafico-container">
+        {{ graficoEscalas | safe }}
+    </div>
+
+    <section class="explicacao-teste">
+        <div class="explicacao-teste-titulo">Por que o Desvio Padrão Bruto não Permite Comparar Variáveis de Escalas Distintas?</div>
+        <p>
+            O gráfico acima ilustra perfeitamente a limitação do desvio padrão bruto (<code>s</code>): em <b>Pontos (PTS)</b>, o desvio padrão é o
+            <b>maior de todos</b> (<code>12,54 pts</code> no Cavaliers e <code>11,80 pts</code> no Nets), enquanto em <b>Bloqueios (BLK)</b> o desvio padrão bruto é o
+            <b>menor de todos</b> (<code>2,47 blk</code> no Cavaliers e <code>2,32 blk</code> no Nets). Se comparássemos diretamente os desvios brutos, concluiríamos
+            erroneamente que a pontuação é a estatística mais instável e os bloqueios a mais estável.
+        </p>
+        <p>
+            Como <code>s</code> carrega a unidade física e a ordem de grandeza da variável (~115 pontos contra ~4,5 bloqueios), a comparação direta é inválida.
+            Ao dividir pela média, o <b>CV elimina a unidade (medida adimensional)</b> e inverte completamente o ranking:
+            <b>Pontos (PTS) é na verdade a variável mais estável</b> (<code>CV ≈ 10,5%–11,1%</code>), enquanto <b>Bloqueios (BLK) é a variável relativamente mais dispersa</b>
+            (<code>CV ≈ 49,1%–54,1%</code>).
+        </p>
+    </section>
+
+    <h2>4. Confronto do CV com Desvio Padrão, Assimetria e Alternativas Robustas ({{ time_selecionado }})</h2>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Assimetria (G₁)</th>
+                    <th>CV Clássico (s / x̄)</th>
+                    <th>Alternativa Robusta 1: IQR / Mediana</th>
+                    <th>Alternativa Robusta 2: MAD / Mediana</th>
+                    <th>Avaliação de Adequação Metodológica</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, valores in estatCv.items() %}
+                <tr>
+                    <td><b>{{ valores.nome_exibicao }}</b></td>
+                    <td>{{ valores.g1_fisher }}</td>
+                    <td><b>{{ valores.cv_pct }}</b></td>
+                    <td>{{ valores.cv_iqr_mediana }}</td>
+                    <td>{{ valores.cv_mad_mediana }}</td>
+                    <td>{{ valores.adequacao_cv }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <section class="explicacao-teste" style="margin-top: 24px;">
+        <div class="explicacao-teste-titulo">Quando Preferir uma Alternativa Robusta ao CV Clássico?</div>
+        <p>
+            O CV clássico (<code>s / x̄</code>) depende da média e do desvio padrão, ambos sensíveis a outliers e à assimetria:
+            valores extremos nas caudas inflam quadradicamente o numerador (<code>s</code>) e deslocam o denominador (<code>x̄</code>).
+        </p>
+        <ul>
+            <li>
+                <b>No Cleveland Cavaliers:</b> Como todas as 7 variáveis possuem distribuição aproximadamente simétrica (<code>|G₁| &lt; 0,50</code>),
+                o CV clássico é adequado, com ressalva apenas para a escala reduzida de <b>BLK</b> e <b>STL</b>.
+            </li>
+            <li>
+                <b>No Brooklyn Nets:</b> Em <b>Faltas Pessoais (PF)</b>, onde há <b>assimetria positiva moderada</b> (<code>G₁ = +0,60</code>) e partidas extremas na cauda
+                superior, o CV clássico (<code>20,18%</code>) sofre influência de outliers. Nessa situação, o uso de alternativas robustas como a
+                <b>razão entre IQR e Mediana</b> (<code>IQR / Mediana = 28,57%</code>) ou o <b>CV baseado no Desvio Absoluto Mediano</b>
+                (<code>MAD / Mediana = 14,29%</code>) descreve a dispersão relativa central sem distorção pelas caudas.
+            </li>
+        </ul>
+    </section>
+
+    <h2>5. Quadro-Resumo Comparativo (Linhas = Variáveis, Colunas = Times, Células = CV)</h2>
+
+    <div class="grafico-container">
+        {{ graficoComparativo | safe }}
+    </div>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variável Analisada</th>
+                    <th>Cleveland Cavaliers — CV (%)</th>
+                    <th>Brooklyn Nets — CV (%)</th>
+                    <th>Diferença Absoluta (p.p.)</th>
+                    <th>Equipe Mais Consistente (Menor CV)</th>
+                    <th>Equipe Mais Irregular (Maior CV)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for coluna, q in quadroResumo.items() %}
+                <tr>
+                    <td><b>{{ q.nome_exibicao }}</b></td>
+                    <td><b>{{ q.cavs_cv }}</b> <span style="color:#64748B; font-size:12px;">({{ q.cavs_media_dp }})</span></td>
+                    <td><b>{{ q.nets_cv }}</b> <span style="color:#64748B; font-size:12px;">({{ q.nets_media_dp }})</span></td>
+                    <td>{{ q.diferenca_pp }}</td>
+                    <td><span class="badge badge-consistente">{{ q.mais_consistente }}</span></td>
+                    <td><span class="badge badge-disperso">{{ q.mais_irregular }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <section class="explicacao-teste" style="margin-top: 24px;">
+        <div class="explicacao-teste-titulo">Destaques do Quadro-Resumo: Homogeneidade e Regularidade entre os Times</div>
+        <ul>
+            <li>
+                <b>Dominância de regularidade do Cleveland Cavaliers (6 de 7 variáveis):</b> O <b>Cleveland Cavaliers</b> é mais consistente (menor CV)
+                em <b>Pontos</b> (<code>10,50%</code> vs. <code>11,10%</code>), <b>Total de Rebotes</b> (<code>15,76%</code> vs. <code>16,77%</code>),
+                <b>Assistências</b> (<code>18,24%</code> vs. <code>18,38%</code>), <b>Cestas de 3 Pontos</b> (<code>22,67%</code> vs. <code>24,04%</code>),
+                <b>Roubos de Bola</b> (<code>33,69%</code> vs. <code>37,86%</code>) e <b>Bloqueios</b> (<code>49,06%</code> vs. <code>54,13%</code>).
+                Mesmo tendo desvios padrões brutos ligeiramente maiores em Pontos e Rebotes, o patamar médio superior do Cavaliers torna seu desempenho
+                relativo mais estável ao longo da temporada.
+            </li>
+            <li>
+                <b>Única inversão do padrão — Faltas Pessoais (PF):</b> Apenas em <b>Faltas Pessoais</b> o <b>Brooklyn Nets</b> apresenta um CV ligeiramente
+                menor (<code>20,18%</code> contra <code>20,73%</code> do Cavaliers), porque sua média de faltas por partida é mais elevada (<code>21,27</code> vs.
+                <code>19,89</code>), diluindo proporcionalmente o desvio padrão.
+            </li>
+            <li>
+                <b>Hierarquia de estabilidade preservada nos dois times:</b> Em ambas as equipes, a ordem de estabilidade relativa é rigorosamente a mesma:
+                <code>Pontos &lt; Rebotes &lt; Assistências &lt; Faltas Pessoais &lt; Cestas de 3 Pontos &lt; Roubos de Bola &lt; Bloqueios</code>.
+            </li>
+        </ul>
+    </section>
 
 {% endblock %}
