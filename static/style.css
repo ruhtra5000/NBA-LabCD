@@ -84,6 +84,20 @@ tbody tr:hover {
     background-color: #F9FAFB;
 }
 
+.tabela-container {
+    width: 100%;
+    overflow-x: auto;
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+}
+
+.tabela-container table {
+    border: none;
+    border-radius: 0;
+}
+
 /* NAVBAR */
 .navbar {
     position: fixed;
@@ -253,4 +267,124 @@ tbody tr:hover {
 
 .explicacao-teste p:last-child {
     margin-bottom: 0;
+}
+
+/* SELEÇAO DE VARIÁVEIS */
+.botoes-variaveis {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 24px 0;
+}
+
+.botao-variavel {
+    padding: 10px 16px;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.botao-variavel:hover {
+    border-color: #A5B4FC;
+    background-color: #FAFAFF;
+}
+
+.botao-variavel.selecionado {
+    border: 2px solid #4F46E5;
+    background-color: #F5F5FF;
+    color: #4338CA;
+    font-weight: 600;
+}
+
+
+/* GRAFICOS */
+.grafico-container {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 20px 0;
+    overflow-x: auto;
+}
+
+/* FOOTER */
+.footer {
+    width: 100%;
+    margin-top: 60px;
+    background-color: #FFFFFF;
+    border-top: 1px solid #E5E7EB;
+    color: #64748B;
+}
+
+.footer-container {
+    width: 70%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 36px 0;
+
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 50px;
+}
+
+.footer h3 {
+    color: #334155;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+.footer h4 {
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 14px;
+}
+
+.footer p,
+.footer li {
+    font-size: 13px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.footer-integrantes ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-integrantes li {
+    margin-bottom: 4px;
+}
+
+.footer-bottom {
+    border-top: 1px solid #F1F3F5;
+    padding: 16px;
+}
+
+.footer-bottom p {
+    font-size: 12px;
+    color: #94A3B8;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .footer-container {
+        width: 90%;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
 }
