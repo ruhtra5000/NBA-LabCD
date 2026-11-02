@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.express as px
 
 # Colunas utilizadas (em todas as analises)
 colunas = [
@@ -69,6 +70,25 @@ def quartisOutliers(df: pd.DataFrame, time: str):
         }
 
     return resultados
+
+
+# Retorna os outliers separadamente
+def listaOutliers(quartisOutliers: dict, metadados):
+    lista_outliers = []
+
+    for variavel, resultado in quartisOutliers.items():
+
+        outliers = resultado["outliers"]
+
+        for _, linha in outliers.iterrows():
+            lista_outliers.append({
+                "variavel": metadados[variavel]["nome"],
+                "data": linha["data_partida"],
+                "confronto": linha["confronto"],
+                "valor": linha[variavel]
+            })
+
+    return lista_outliers
 
 
 # Retorna algumas medidas de dispersão por variável
@@ -200,6 +220,75 @@ def boxplotMtc(df: pd.DataFrame, time: str):
             categoryarray=colunas
         ),
         legend_title="Medidas estatísticas"
+    )
+
+    return fig
+
+# Retorna um grafico comparativo dos dois times para uma variavel selecionada
+def graficoComparacao(df: pd.DataFrame, variavel: str):
+    resultados = []
+
+    for time in ["Cleveland Cavaliers", "Brooklyn Nets"]:
+
+        dados = df[df["nome_time"] == time]
+
+        # Medidas de tendência central
+        central = mediaModaMediana(df, time)
+
+        # Medidas de dispersão
+        dispersao = medidasDispersao(df, time)
+
+        # Quartis e outliers
+        quartis = quartisOutliers(df, time)
+
+        # Recupera os resultados da variável selecionada
+        dados_central = central[variavel]
+        dados_dispersao = dispersao[variavel]
+        dados_quartis = quartis[variavel]
+
+        resultados.append({
+            "Time": time,
+            "Média": dados_central["media"],
+            "Mediana": dados_central["mediana"],
+            "Moda": dados_central["moda"],
+            "Menor valor": dados_dispersao["menor_valor"],
+            "Maior valor": dados_dispersao["maior_valor"],
+            "Amplitude": dados_dispersao["amplitude"],
+            "Desvio padrão": dados_dispersao["desvio_padrao"],
+            "Variância": dados_dispersao["variancia"],
+            "Q1": dados_quartis["q1"],
+            "Q3": dados_quartis["q3"],
+            "IQR": dados_quartis["iqr"],
+            "Limite inferior": dados_quartis["limite_inferior"],
+            "Limite superior": dados_quartis["limite_superior"],
+            "Quantidade de outliers": dados_quartis["quantidade"]
+        })
+
+    df_resultados = pd.DataFrame(resultados)
+
+    df_grafico = df_resultados.melt(
+        id_vars="Time",
+        var_name="Medida estatística",
+        value_name="Valor"
+    )
+
+    fig = px.bar(
+        df_grafico,
+        x="Medida estatística",
+        y="Valor",
+        color="Time",
+        barmode="group",
+        title=f"Comparação entre equipes — {variavel}",
+        text_auto=".2f"
+    )
+
+    fig.update_layout(
+        xaxis_title="Medidas estatísticas",
+        yaxis_title="Valor",
+        legend_title="Equipe",
+        template="plotly_white",
+        xaxis_tickangle=-45,
+        height=600
     )
 
     return fig

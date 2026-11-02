@@ -35,11 +35,22 @@ def inicio():
 
 @app.route("/mtc/<time>")
 def medidasTendCentral(time: str):
+    variavel_selecionada = request.args.get("variavel", "pontos")
+    if variavel_selecionada not in METADADOS_VARIAVEIS:
+        variavel_selecionada = "pontos"
+
     estatMediaModaMediana = mediaModaMediana(df, time)
     estatQuartisOutliers = quartisOutliers(df, time)
     estatMedidasDispersao = medidasDispersao(df, time)
 
+    listaValOutliers = listaOutliers(estatQuartisOutliers, METADADOS_VARIAVEIS)
+
     boxplotGrafico = boxplotMtc(df, time).to_html(
+        full_html=False,
+        include_plotlyjs="cdn"
+    )
+
+    graficoComparativo = graficoComparacao(df, variavel_selecionada).to_html(
         full_html=False,
         include_plotlyjs="cdn"
     )
@@ -47,10 +58,14 @@ def medidasTendCentral(time: str):
     return render_template(
         "mtc.html",
         time_selecionado=time,
+        variavel_selecionada=variavel_selecionada,
         estatMediaModaMediana = estatMediaModaMediana,
         estatQuartisOutliers = estatQuartisOutliers,
         estatMedidasDispersao = estatMedidasDispersao,
-        boxplotGrafico = boxplotGrafico
+        listaValOutliers = listaValOutliers,
+        boxplotGrafico = boxplotGrafico,
+        graficoComparativo = graficoComparativo,
+        metadados_variaveis = METADADOS_VARIAVEIS,
     )
 
 @app.route("/assimetria/<time>")

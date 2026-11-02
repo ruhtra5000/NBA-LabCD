@@ -102,7 +102,7 @@ Medidas de Têndencia Central
                     <th>IQR</th>
                     <th>Limite inferior</th>
                     <th>Limite superior</th>
-                    <th>Quantidade</th>
+                    <th>Nº de outliers</th>
                 </tr>
             </thead>
 
@@ -122,9 +122,41 @@ Medidas de Têndencia Central
         </table>
     </div>
 
+    <section class="card-outliers">
+        <h2>Outliers identificados</h2>
+
+        {% if listaValOutliers %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variável</th>
+                            <th>Data</th>
+                            <th>Confronto</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for outlier in listaValOutliers %}
+                            <tr>
+                                <td>{{ outlier.variavel }}</td>
+                                <td>{{ outlier.data.strftime('%d/%m/%Y') }}</td>
+                                <td>{{ outlier.confronto }}</td>
+                                <td>{{ outlier.valor }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>Nenhum valor atípico foi identificado.</p>
+        {% endif %}
+    </section>
+
     <h2>Boxplot - {{ time_selecionado }}</h2>
 
-    <div>
+    <div class="grafico-container">
         {{ boxplotGrafico | safe }}
     </div>
 
@@ -139,5 +171,25 @@ Medidas de Têndencia Central
         a média e o desvio padrão. Comumente, usando o Z-Score, toma-se como outlier qualquer valor 
         que esteja 4+ desvios padrão acima ou abaixo da média.
     </p>
+
+    <h2>Comparativo de indicadores estatísticos - Cleveland Cavaliers VS Brooklyn Nets</h2>
+
+    <p>
+        Selecione abaixo a variável para inspecionar e comparar simultaneamente os dados de ambos
+        os times.
+    </p>
+
+    <div class="botoes-variaveis">
+        {% for chave, meta in metadados_variaveis.items() %}
+            <a href="{{ url_for('medidasTendCentral', time=time_selecionado, variavel=chave) }}"
+               class="botao-variavel {% if variavel_selecionada == chave %}selecionado{% endif %}">
+                {{ meta.nome }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="grafico-container">
+        {{ graficoComparativo | safe }}
+    </div>
 
 {% endblock %}
