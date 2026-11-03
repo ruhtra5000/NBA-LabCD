@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}
+Valores inconsistentes e outliers
+{% endblock %}
+
+{% block content %}
+    <h1>Valores inconsistentes e outliers</h1>
+
+    <section class="selecao-times">
+        <h2>Selecione uma equipe</h2>
+        <div class="botoes-times">
+            <a href="{{ url_for('valoresInconsistentesOutliers', time='Cleveland Cavaliers', variavel=variavel_selecionada) }}"
+               class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
+                <img src="{{ url_for('static', filename='images/cavaliers.png') }}" alt="Logo Cleveland Cavaliers">
+                <span>Cleveland Cavaliers</span>
+            </a>
+            <a href="{{ url_for('valoresInconsistentesOutliers', time='Brooklyn Nets', variavel=variavel_selecionada) }}"
+               class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
+                <img src="{{ url_for('static', filename='images/nets.png') }}" alt="Logo Brooklyn Nets">
+                <span>Brooklyn Nets</span>
+            </a>
+        </div>
+    </section>
+
+    <h2>Quantidade por coluna — {{ time_selecionado }}</h2>
+    <p>As inconsistências violam regras de domínio ou relações entre campos. Os outliers são valores incomuns na distribuição e podem representar desempenhos esportivos legítimos. Os métodos abaixo são univariados e calculados separadamente para cada time. Identificadores, datas, texto e resultado binário não recebem detecção quantitativa de outliers; suas inconsistências e valores ausentes estão na página inicial.</p>
+    <div class="tabela-container">
+        <table>
+            <thead><tr><th>Variável</th><th>Inconsistentes</th><th>n válido</th>{% for m, nome in metodos.items() %}<th>{{ nome }}</th>{% endfor %}</tr></thead>
+            <tbody>
+                {% for c, resultados_coluna in resultados.items() %}
+                <tr>
+                    <td>{{ variaveis[c].nome }}</td><td>{{ inconsistencias[c] }}</td><td>{{ resultados_coluna.iqr.n }}</td>
+                    {% for m in metodos %}
+                    <td>{% if resultados_coluna[m].status.startswith('Não aplicável') %}Não aplicável{% else %}<a href="{{ url_for('valoresInconsistentesOutliers', time=time_selecionado, variavel=c) }}#{{ m }}">{{ resultados_coluna[m].quantidade }}</a>{% endif %}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Selecione uma variável</h2>
+    <div class="botoes-variaveis">
+        {% for c, meta in variaveis.items() %}
+        <a href="{{ url_for('valoresInconsistentesOutliers', time=time_selecionado, variavel=c) }}"
+           class="botao-variavel {% if c == variavel_selecionada %}selecionado{% endif %}">{{ meta.nome }}</a>
+        {% endfor %}
+    </div>
+
+    <p>Variável analisada: <b>{{ variaveis[variavel_selecionada].nome }}</b>, em <b>{{ variaveis[variavel_selecionada].unidade }}</b>. Valores ausentes ou não finitos não entram nos cálculos; a tabela informa o tamanho válido. Séries constantes e amostras com menos de três observações são identificadas quando um método não se aplica. Os valores da base não são removidos nem substituídos pelos detectores.</p>
+
+    {% for m, nome in metodos.items() %}
+    {% set resultado = resultados[variavel_selecionada][m] %}
+    <h2 id="{{ m }}">{{ 'Teste de Grubbs' if m == 'grubbs' else nome }}</h2>
+    <section class="explicacao-teste">
+        {% if m == 'iqr' %}
+        <p>IQR = Q3 − Q1. O critério já utilizado nos boxplots sinaliza valores estritamente fora de Q1 − 1,5×IQR e Q3 + 1,5×IQR. Os quartis usam interpolação linear. A teoria, os limites de 1,5×IQR e 3×IQR e a comparação entre times estão na seção <a href="{{ url_for('intervInterquartil', time=time_selecionado) }}">Intervalo Interquartil</a>.</p>
+        {% elif m == 'zscore' %}
+        <p>Z-score = (x − média)/s, com desvio padrão amostral s (denominador n − 1). Adotamos |z| &gt; 3 como limiar de triagem: valores a mais de três desvios da média são sinalizados. A média e o desvio são sensíveis às caudas; por isso, em contagens assimétricas, o resultado pode divergir do IQR. O limiar é uma decisão metodológica do grupo, não uma comprovação de erro de registro.</p>
+        {% elif m == 'grubbs' %}
+        <p>O teste bilateral de Grubbs avalia G = max|x − média|/s. Para n observações, α = 0,05 e t = t(1 − α/(2n), n − 2), o limite é Gcrítico = (n − 1)/√n × √[t²/(n − 2 + t²)]. O candidato de maior desvio é sinalizado somente se G &gt; Gcrítico. Aplicamos um único teste, que procura no máximo um outlier por variável. A interpretação pressupõe normalidade aproximada; em dados discretos ou assimétricos, deve ser confrontada com histograma e boxplot. Não há remoção iterativa de observações.</p>
+        {% elif m == 'ecod' %}
+        <p>ECOD (Empirical Cumulative Distribution-based Outlier Detection) estima funções de distribuição empírica nas caudas esquerda e direita. Probabilidades de cauda são transformadas por −log e combinadas considerando a assimetria. Utilizamos ECOD do PyOD, em uma dimensão por execução, com n_jobs = 1 e contamination = 0,05 para o corte dos scores. Scores maiores representam valores menos usuais. A fração de corte é uma escolha exploratória e não estima a proporção verdadeira de erros.</p>
+        {% elif m == 'knn' %}
+        <p>K-NN (K-Nearest Neighbors) usa como score a distância euclidiana ao 5º vizinho mais próximo, excluindo a própria observação. Em amostras menores, k = min(5, n − 1). Sinalizamos distâncias estritamente acima do percentil 95. A distância mede isolamento na distribuição; empates podem produzir menos de 5% de sinalizações e não são desfeitos arbitrariamente.</p>
+        {% elif m == 'dbscan' %}
+        <p>DBSCAN (Density-Based Spatial Clustering of Applications with Noise) reúne observações conectadas por vizinhanças densas. Adotamos eps = 0,50 e min_samples = 5, incluindo o próprio ponto. Observações que não pertencem a um grupo recebem rótulo −1 e são sinalizadas como ruído. Os demais rótulos identificam grupos, sem representar grau de anomalia. Esses parâmetros são uma referência exploratória fixa para a base analisada, não uma configuração universal.</p>
+        {% elif m == 'lof' %}
+        <p>LOF (Local Outlier Factor) compara a densidade local de cada observação com a dos seus vizinhos. Densidades relativamente menores geram scores LOF maiores. Começamos com 20 vizinhos; quando há muitas repetições, k é elevado até o tamanho do maior bloco de empates e limitado a n − 1, evitando vizinhanças compostas apenas por distâncias zero. O k efetivo aparece no critério abaixo. Usamos contamination = 0,05 e fit_predict sobre a própria amostra. O score exibido é −negative_outlier_factor_; o rótulo −1 identifica os sinalizados.</p>
+        {% endif %}
+
+        {% if m in ['knn', 'dbscan', 'lof'] %}
+        <p>As distâncias são calculadas em uma cópia padronizada por (x − média)/σ, com σ populacional, convenção do StandardScaler. Assim, eps = 0,50 corresponde a meia unidade padronizada. As medidas descritivas continuam usando desvio amostral e os valores originais.</p>
+        {% endif %}
+        <p><b>Critério calculado:</b> {{ resultado.criterio }}.</p>
+        <p><b>Status:</b> {{ resultado.status }}. <b>Quantidade:</b> {{ resultado.quantidade }}.</p>
+        <p>{{ interpretacoes[m] }}</p>
+    </section>
+
+    <div class="tabela-container">
+        <table>
+            <thead><tr><th>Data</th><th>Confronto</th><th>Valor ({{ variaveis[variavel_selecionada].unidade }})</th><th>{{ 'Rótulo' if m == 'dbscan' else 'Score' }}</th></tr></thead>
+            <tbody>
+                {% for r in detalhes[m] %}
+                <tr><td>{{ r.data.strftime('%d/%m/%Y') if r.data == r.data else 'Data inválida' }}</td><td>{{ r.confronto }}</td><td>{{ r.valor|numero }}</td><td>{{ r.score|numero }}</td></tr>
+                {% else %}<tr><td colspan="4">Nenhum outlier sinalizado por este método nesta variável.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+{% endblock %}
