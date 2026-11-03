@@ -2,7 +2,7 @@
 @font-face {
     font-family: 'Google Sans';
     src: url('/static/fonts/GoogleSansFlex.ttf') format('truetype');
-    font-weight: 400;
+    font-weight: 1 1000;
     font-style: normal;
 }
 
