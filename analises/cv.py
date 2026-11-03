@@ -103,7 +103,7 @@ def calcularCvTime(df: pd.DataFrame, time: str) -> dict:
             "media_num": round(media, 2),
             "desvio_padrao": f"{dp_amostral:.2f}",
             "dp_num": round(dp_amostral, 2),
-            "cv_fracao": f"{cv_fracao:.4f}",
+            "cv_fracao": f"{cv_fracao:.2f}",
             "cv_pct": f"{cv_pct:.2f}%",
             "cv_pct_num": round(cv_pct, 2),
             "validade": verificarValidadeCv(media),
@@ -160,6 +160,8 @@ def quadroResumoCv(df: pd.DataFrame) -> dict:
 def graficoDesvioVsCv(df: pd.DataFrame, time: str):
     estat = calcularCvTime(df, time)
     nomes_eixo = [estat[c]["nome_exibicao"] for c in colunas]
+    siglas_eixo = [nome.rsplit("(", 1)[-1].rstrip(")") for nome in nomes_eixo]
+    unidades = [estat[c]["unidade"] for c in colunas]
     valores_dp = [estat[c]["dp_num"] for c in colunas]
     valores_cv = [estat[c]["cv_pct_num"] for c in colunas]
 
@@ -167,8 +169,8 @@ def graficoDesvioVsCv(df: pd.DataFrame, time: str):
         rows=1,
         cols=2,
         subplot_titles=(
-            "Desvio Padrão Bruto (s) — Escalas Incompatíveis",
-            "Coeficiente de Variação (CV %) — Escala Adimensional Comparável"
+            "Desvio Padrão Bruto (s)<br>Escalas Incompatíveis",
+            "Coeficiente de Variação (CV %)<br>Escala Adimensional Comparável"
         ),
         horizontal_spacing=0.12
     )
@@ -178,10 +180,11 @@ def graficoDesvioVsCv(df: pd.DataFrame, time: str):
             name="Desvio Padrão Amostral (s)",
             x=nomes_eixo,
             y=valores_dp,
+            customdata=unidades,
             marker_color="#64748B",
             text=[f"{v:.2f}" for v in valores_dp],
             textposition="outside",
-            hovertemplate="<b>%{x}</b><br>Desvio Padrão (s): %{y:.2f} (unidade bruta)<extra></extra>"
+            hovertemplate="<b>%{x}</b><br>Desvio Padrão (s): %{y:.2f} %{customdata}<extra></extra>"
         ),
         row=1,
         col=1
@@ -226,12 +229,14 @@ def graficoDesvioVsCv(df: pd.DataFrame, time: str):
         title=f"Por que o Desvio Padrão Bruto Engana entre Escalas Distintas? — {time}",
         template="plotly_white",
         height=490,
-        showlegend=False
+        showlegend=True,
+        legend_title="Medidas Estatísticas"
     )
 
-    fig.update_xaxes(title_text="Variáveis Analisadas", tickangle=-20, row=1, col=1)
-    fig.update_xaxes(title_text="Variáveis Analisadas", tickangle=-20, row=1, col=2)
-    fig.update_yaxes(title_text="Desvio Padrão Amostral s (unidades brutas)", range=[0, max(valores_dp) * 1.22], row=1, col=1)
+    fig.update_xaxes(title_text="Variáveis Analisadas", tickangle=0,
+                     tickmode="array", tickvals=nomes_eixo, ticktext=siglas_eixo,
+                     automargin=True)
+    fig.update_yaxes(title_text="Desvio Padrão Amostral (s)", range=[0, max(valores_dp) * 1.22], row=1, col=1)
     fig.update_yaxes(title_text="Coeficiente de Variação CV (%)", range=[0, max(valores_cv) * 1.22], row=1, col=2)
 
     return fig
