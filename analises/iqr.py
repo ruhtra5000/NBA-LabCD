@@ -171,6 +171,7 @@ def quadroResumoIqr(df: pd.DataFrame) -> dict:
 def graficoIqrVsAmplitudeDesvio(df: pd.DataFrame, time: str):
     estat = calcularIqrTime(df, time)
     nomes_eixo = [estat[c]["nome_exibicao"] for c in colunas]
+    unidades = [estat[c]["unidade"] for c in colunas]
     valores_iqr = [estat[c]["iqr_num"] for c in colunas]
     valores_dp = [estat[c]["dp_num"] for c in colunas]
     valores_amp = [estat[c]["amplitude_num"] for c in colunas]
@@ -182,10 +183,11 @@ def graficoIqrVsAmplitudeDesvio(df: pd.DataFrame, time: str):
             name="Amplitude Total (Máx − Mín)",
             x=nomes_eixo,
             y=valores_amp,
+            customdata=unidades,
             marker_color="#94A3B8",
             text=[f"{v:.2f}" for v in valores_amp],
             textposition="outside",
-            hovertemplate="<b>%{x}</b><br>Amplitude Total: %{y:.2f}<extra></extra>"
+            hovertemplate="<b>%{x}</b><br>Amplitude Total: %{y:.2f} %{customdata}<extra></extra>"
         )
     )
 
@@ -194,10 +196,11 @@ def graficoIqrVsAmplitudeDesvio(df: pd.DataFrame, time: str):
             name="Intervalo Interquartil (IQR = Q₃ − Q₁)",
             x=nomes_eixo,
             y=valores_iqr,
+            customdata=unidades,
             marker_color="#4F46E5",
             text=[f"{v:.2f}" for v in valores_iqr],
             textposition="outside",
-            hovertemplate="<b>%{x}</b><br>IQR (50% central): %{y:.2f}<extra></extra>"
+            hovertemplate="<b>%{x}</b><br>IQR (50% central): %{y:.2f} %{customdata}<extra></extra>"
         )
     )
 
@@ -206,10 +209,11 @@ def graficoIqrVsAmplitudeDesvio(df: pd.DataFrame, time: str):
             name="Desvio Padrão Amostral (s)",
             x=nomes_eixo,
             y=valores_dp,
+            customdata=unidades,
             marker_color="#0D9488",
             text=[f"{v:.2f}" for v in valores_dp],
             textposition="outside",
-            hovertemplate="<b>%{x}</b><br>Desvio Padrão (s): %{y:.2f}<extra></extra>"
+            hovertemplate="<b>%{x}</b><br>Desvio Padrão (s): %{y:.2f} %{customdata}<extra></extra>"
         )
     )
 
@@ -224,6 +228,10 @@ def graficoIqrVsAmplitudeDesvio(df: pd.DataFrame, time: str):
         height=490
     )
 
+    fig.update_xaxes(tickmode="array", tickvals=nomes_eixo,
+                     ticktext=[f"{nome}<br>({unidade})" for nome, unidade in zip(nomes_eixo, unidades)],
+                     automargin=True)
+
     return fig
 
 
@@ -232,6 +240,7 @@ def graficoComparativoIqrTimes(df: pd.DataFrame):
     nets = calcularIqrTime(df, "Brooklyn Nets")
 
     nomes_eixo = [METADADOS_VARIAVEIS[c]["nome"] for c in colunas]
+    unidades = [METADADOS_VARIAVEIS[c]["unidade"] for c in colunas]
     valores_cavs = [cavs[c]["iqr_num"] for c in colunas]
     valores_nets = [nets[c]["iqr_num"] for c in colunas]
 
@@ -242,10 +251,11 @@ def graficoComparativoIqrTimes(df: pd.DataFrame):
             name="Cleveland Cavaliers",
             x=nomes_eixo,
             y=valores_cavs,
+            customdata=unidades,
             marker_color="#860038",
             text=[f"{v:.2f}" for v in valores_cavs],
             textposition="outside",
-            hovertemplate="<b>%{x}</b><br>Cleveland Cavaliers — IQR: %{y:.2f}<extra></extra>"
+            hovertemplate="<b>%{x}</b><br>Cleveland Cavaliers — IQR: %{y:.2f} %{customdata}<extra></extra>"
         )
     )
 
@@ -254,10 +264,11 @@ def graficoComparativoIqrTimes(df: pd.DataFrame):
             name="Brooklyn Nets",
             x=nomes_eixo,
             y=valores_nets,
+            customdata=unidades,
             marker_color="#1F2937",
             text=[f"{v:.2f}" for v in valores_nets],
             textposition="outside",
-            hovertemplate="<b>%{x}</b><br>Brooklyn Nets — IQR: %{y:.2f}<extra></extra>"
+            hovertemplate="<b>%{x}</b><br>Brooklyn Nets — IQR: %{y:.2f} %{customdata}<extra></extra>"
         )
     )
 
@@ -271,5 +282,9 @@ def graficoComparativoIqrTimes(df: pd.DataFrame):
         legend_title="Equipes",
         height=480
     )
+
+    fig.update_xaxes(tickmode="array", tickvals=nomes_eixo,
+                     ticktext=[f"{nome}<br>({unidade})" for nome, unidade in zip(nomes_eixo, unidades)],
+                     automargin=True)
 
     return fig
