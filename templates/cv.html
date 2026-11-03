@@ -126,8 +126,9 @@ Coeficiente de Variação
                 <b>Pontos</b> (<code>x̄ ≈ 106 a 119 pts</code>) e <b>Rebotes</b> (<code>x̄ ≈ 40 a 44 reb</code>) — a média está suficientemente distante de zero.
                 Porém, em <b>Bloqueios (BLK)</b> (<code>x̄ = 5,03</code> no Cavaliers e <code>4,28</code> no Nets) e <b>Roubos de Bola (STL)</b>
                 (<code>x̄ = 8,57</code> no Cavaliers e <code>7,95</code> no Nets), a média está próxima de zero. Como <code>x̄</code> está no denominador de
-                <code>CV = (s / x̄) × 100</code>, uma oscilação natural de apenas ±2 tocos ou roubos de bola entre um jogo e outro representa de 35% a 55%
-                da média, inflando mecanicamente o CV. Por isso, o CV alto em BLK e STL deve ser interpretado com cautela.
+                <code>CV = (s / x̄) × 100</code>, uma variação de ±2 roubos de bola equivale a aproximadamente 23%–25% da média,
+                enquanto ±2 bloqueios equivalem a cerca de 40%–47%. Por isso, a mesma variação absoluta representa uma parcela
+                maior da média nessas contagens baixas, e o CV alto em BLK e STL deve ser interpretado com cautela.
             </li>
         </ul>
     </section>
@@ -186,14 +187,14 @@ Coeficiente de Variação
             <li>
                 <b>Variáveis de Alta Consistência (CV ≤ 15%):</b> <b>Pontos (PTS)</b> apresenta o menor CV em ambas as equipes
                 (<code>10,50%</code> no Cavaliers e <code>11,10%</code> no Nets). Em termos práticos, isso significa que a produção ofensiva total do time é
-                altamente previsível e regular de um jogo para outro, oscilando cerca de apenas ~10% a 11% em torno de sua média.
+                relativamente regular na amostra de um jogo para outro, oscilando cerca de apenas ~10% a 11% em torno de sua média.
             </li>
             <li>
                 <b>Variáveis de Regularidade Moderada (15% &lt; CV ≤ 30%):</b> <b>Total de Rebotes (REB)</b> (<code>15,76%</code> / <code>16,77%</code>),
                 <b>Assistências (AST)</b> (<code>18,24%</code> / <code>18,38%</code>), <b>Faltas Pessoais (PF)</b> (<code>20,73%</code> / <code>20,18%</code>) e
                 <b>Cestas de 3 Pontos (FG3M)</b> (<code>22,67%</code> / <code>24,04%</code>) exibem variação moderada. Destaca-se que as bolas de 3 pontos
-                são mais voláteis que os pontos totais, pois quando o aproveitamento do perímetro cai em uma partida, as equipes compensam pontuando no garrafão
-                e nos lances livres.
+                são mais voláteis que os pontos totais. Uma hipótese é a compensação por cestas de dois pontos e lances livres quando
+                o aproveitamento do perímetro diminui, mas essa relação não foi testada nas análises univariadas apresentadas.
             </li>
             <li>
                 <b>Variáveis de Alta Dispersão Relativa (CV &gt; 30%):</b> <b>Roubos de Bola (STL)</b> (<code>33,69%</code> / <code>37,86%</code>) e
@@ -259,7 +260,7 @@ Coeficiente de Variação
         <div class="explicacao-teste-titulo">Quando Preferir uma Alternativa Robusta ao CV Clássico?</div>
         <p>
             O CV clássico (<code>s / x̄</code>) depende da média e do desvio padrão, ambos sensíveis a outliers e à assimetria:
-            valores extremos nas caudas inflam quadradicamente o numerador (<code>s</code>) e deslocam o denominador (<code>x̄</code>).
+            valores extremos contribuem com desvios quadráticos para a variância que compõe o numerador (<code>s</code>) e deslocam o denominador (<code>x̄</code>).
         </p>
         <ul>
             <li>
@@ -267,8 +268,7 @@ Coeficiente de Variação
                 o CV clássico é adequado, com ressalva apenas para a escala reduzida de <b>BLK</b> e <b>STL</b>.
             </li>
             <li>
-                <b>No Brooklyn Nets:</b> Em <b>Faltas Pessoais (PF)</b>, onde há <b>assimetria positiva moderada</b> (<code>G₁ = +0,60</code>) e partidas extremas na cauda
-                superior, o CV clássico (<code>20,18%</code>) sofre influência de outliers. Nessa situação, o uso de alternativas robustas como a
+                <b>No Brooklyn Nets:</b> Em <b>Faltas Pessoais (PF)</b>, onde há <b>assimetria positiva moderada</b> (<code>G₁ = +0,60</code>), o CV clássico (<code>20,18%</code>) é sensível à cauda, embora não haja outliers pela regra de 1,5×IQR. Nessa situação, o uso de alternativas robustas como a
                 <b>razão entre IQR e Mediana</b> (<code>IQR / Mediana = 28,57%</code>) ou o <b>CV baseado no Desvio Absoluto Mediano</b>
                 (<code>MAD / Mediana = 14,29%</code>) descreve a dispersão relativa central sem distorção pelas caudas.
             </li>
