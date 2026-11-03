@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+from analises.assimetria import METADADOS_VARIAVEIS
 
 # Colunas utilizadas (em todas as analises)
 colunas = [
@@ -118,6 +119,7 @@ def boxplotMtc(df: pd.DataFrame, time: str):
     resultados = quartisOutliers(df, time)
 
     fig = go.Figure()
+    legendas_outliers = set()
 
     for coluna in colunas:
         resultado = resultados[coluna]
@@ -194,101 +196,96 @@ def boxplotMtc(df: pd.DataFrame, time: str):
                 hovertemplate="Moda: %{y:.2f}<extra></extra>"
             ))
 
-        # Outliers
-        if not outliers.empty:
+        for nome, valor, cor, simbolo in [
+            ("Q1", q1, "#4F46E5", "line-ew"),
+            ("Mediana", valores.median(), "#0D9488", "line-ew"),
+            ("Q3", q3, "#4F46E5", "line-ew"),
+            ("Limite inferior", limite_inferior, "#7C3AED", "x"),
+            ("Limite superior", limite_superior, "#7C3AED", "x"),
+        ]:
             fig.add_trace(go.Scatter(
-                x=[coluna] * len(outliers),
-                y=outliers,
-                mode="markers",
-                name="Outliers",
-                marker=dict(
-                    symbol="circle",
-                    size=8,
-                    color="black"
-                ),
+                x=[coluna], y=[valor], mode="markers", name=nome,
+                marker=dict(symbol=simbolo, size=10, color=cor),
                 showlegend=(coluna == colunas[0]),
-                hovertemplate="Outlier: %{y}<extra></extra>"
+                hovertemplate=nome+": %{y:.2f} "+METADADOS_VARIAVEIS[coluna]["unidade"]+"<extra></extra>"
             ))
+
+        for nome, selecionados, simbolo in [
+            ("Outliers inferiores", valores[valores < limite_inferior], "triangle-down"),
+            ("Outliers superiores", valores[valores > limite_superior], "triangle-up"),
+        ]:
+            if selecionados.empty:
+                continue
+            fig.add_trace(go.Scatter(
+                x=[coluna]*len(selecionados), y=selecionados, mode="markers", name=nome,
+                marker=dict(symbol=simbolo, size=8, color="black"),
+                showlegend=nome not in legendas_outliers,
+                hovertemplate=nome+": %{y:.2f} "+METADADOS_VARIAVEIS[coluna]["unidade"]+"<extra></extra>"
+            ))
+            legendas_outliers.add(nome)
 
     fig.update_layout(
         title=f"Distribuição das estatísticas - {time}",
         xaxis_title="Variáveis",
-        yaxis_title="Valores",
+        yaxis_title="Ocorrências por partida",
         xaxis=dict(
             type="category",
             categoryorder="array",
-            categoryarray=colunas
+            categoryarray=colunas,
+            tickmode="array", tickvals=colunas,
+            ticktext=[METADADOS_VARIAVEIS[c]["nome"]+"<br>"+METADADOS_VARIAVEIS[c]["unidade"] for c in colunas]
         ),
         legend_title="Medidas estatísticas"
     )
 
     return fig
 
-# Retorna um grafico comparativo dos dois times para uma variavel selecionada
+# Função para gerar um gráfico de comparação entre as duas equipes
 def graficoComparacao(df: pd.DataFrame, variavel: str):
     resultados = []
-
+    unidade = METADADOS_VARIAVEIS[variavel]["unidade"]
+    unidades = [unidade, f"({unidade})²", "jogos"]
     for time in ["Cleveland Cavaliers", "Brooklyn Nets"]:
-
-        dados = df[df["nome_time"] == time]
-
-        # Medidas de tendência central
-        central = mediaModaMediana(df, time)
-
-        # Medidas de dispersão
-        dispersao = medidasDispersao(df, time)
-
-        # Quartis e outliers
-        quartis = quartisOutliers(df, time)
-
-        # Recupera os resultados da variável selecionada
-        dados_central = central[variavel]
-        dados_dispersao = dispersao[variavel]
-        dados_quartis = quartis[variavel]
-
-        resultados.append({
-            "Time": time,
-            "Média": dados_central["media"],
-            "Mediana": dados_central["mediana"],
-            "Moda": dados_central["moda"],
-            "Menor valor": dados_dispersao["menor_valor"],
-            "Maior valor": dados_dispersao["maior_valor"],
-            "Amplitude": dados_dispersao["amplitude"],
-            "Desvio padrão": dados_dispersao["desvio_padrao"],
-            "Variância": dados_dispersao["variancia"],
-            "Q1": dados_quartis["q1"],
-            "Q3": dados_quartis["q3"],
-            "IQR": dados_quartis["iqr"],
-            "Limite inferior": dados_quartis["limite_inferior"],
-            "Limite superior": dados_quartis["limite_superior"],
-            "Quantidade de outliers": dados_quartis["quantidade"]
-        })
-
-    df_resultados = pd.DataFrame(resultados)
-
-    df_grafico = df_resultados.melt(
-        id_vars="Time",
-        var_name="Medida estatística",
-        value_name="Valor"
-    )
-
-    fig = px.bar(
-        df_grafico,
-        x="Medida estatística",
-        y="Valor",
-        color="Time",
-        barmode="group",
-        title=f"Comparação entre equipes — {variavel}",
-        text_auto=".2f"
-    )
-
-    fig.update_layout(
-        xaxis_title="Medidas estatísticas",
-        yaxis_title="Valor",
-        legend_title="Equipe",
-        template="plotly_white",
-        xaxis_tickangle=-45,
-        height=600
-    )
-
+        central = mediaModaMediana(df, time)[variavel]
+        dispersao = medidasDispersao(df, time)[variavel]
+        quartis = quartisOutliers(df, time)[variavel]
+        medidas = {
+            "Média": central["media"], "Mediana": central["mediana"],
+            "Menor valor": dispersao["menor_valor"], "Maior valor": dispersao["maior_valor"],
+            "Amplitude": dispersao["amplitude"], "Desvio padrão": dispersao["desvio_padrao"],
+            "Q1": quartis["q1"], "Q3": quartis["q3"], "IQR": quartis["iqr"],
+            "Limite inferior": quartis["limite_inferior"], "Limite superior": quartis["limite_superior"],
+        }
+        for i, moda in enumerate(central["moda"], 1):
+            medidas["Moda" if len(central["moda"]) == 1 else f"Moda {i}"] = moda
+        for nome, valor in medidas.items():
+            resultados.append({"Time": time, "Medida estatística": nome, "Valor": valor, "Unidade": unidade})
+        resultados.append({"Time": time, "Medida estatística": "Variância", "Valor": dispersao["variancia"], "Unidade": unidades[1]})
+        resultados.append({"Time": time, "Medida estatística": "Quantidade de outliers", "Valor": quartis["quantidade"], "Unidade": "jogos"})
+    fig = px.bar(pd.DataFrame(resultados), x="Medida estatística", y="Valor", color="Time",
+                 barmode="group", facet_row="Unidade", category_orders={"Unidade": unidades},
+                 title=f"Comparação entre equipes — {METADADOS_VARIAVEIS[variavel]['nome']}", text_auto=".2f")
+    fig.update_yaxes(matches=None, showticklabels=True)
+    fig.update_xaxes(matches=None, showticklabels=True, title_text="Medidas estatísticas", tickangle=-35)
+    for row, titulo in zip([3, 2, 1], unidades):
+        fig.update_yaxes(title_text=titulo, row=row, col=1)
+    fig.update_layout(template="plotly_white", legend_title="Equipe", height=1100)
     return fig
+
+# Função para interpretar os resultados das análises estatísticas de uma equipe
+def interpretarMtc(df: pd.DataFrame, time: str):
+    dados = filtrarBasePorTime(df, time)
+    quartis = quartisOutliers(df, time)
+    resultados = []
+    for coluna in colunas:
+        serie = dados[coluna].dropna()
+        meta = METADADOS_VARIAVEIS[coluna]
+        modas = ", ".join(f"{v:.2f}" for v in serie.mode())
+        tipica = "a mediana" if abs(serie.skew()) >= 0.5 else "a média e a mediana"
+        resultados.append({"variavel": meta["nome"], "analise":
+            f"Em {len(serie)} partidas, a média foi {serie.mean():.2f} e a mediana {serie.median():.2f} {meta['unidade']}. "
+            f"Moda(s): {modas}. Os valores variaram de {serie.min():.2f} a {serie.max():.2f}, "
+            f"com desvio padrão amostral de {serie.std(ddof=1):.2f}. O IQR sinalizou {quartis[coluna]['quantidade']} "
+            f"ocorrência(s). Considerando a assimetria, {tipica} descreve(m) o valor típico; "
+            "as ocorrências atípicas devem ser investigadas no contexto das partidas."})
+    return resultados

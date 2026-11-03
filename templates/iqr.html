@@ -105,7 +105,7 @@ Intervalo Interquartil
 
         <h3>Fórmula do Intervalo Interquartil</h3>
         <p>
-            O <b>Intervalo Interquartil (IQR)</b> mede a amplitude da faixa central que concentra exatamente <b>50% das observações</b>
+            O <b>Intervalo Interquartil (IQR)</b> mede a amplitude da faixa central que descreve os <b>50% centrais da distribuição</b>
             de uma variável (descartando os 25% menores e os 25% maiores valores da amostra):
         </p>
         <div class="formula-box">
@@ -157,7 +157,7 @@ Intervalo Interquartil
     <section class="explicacao-teste" style="margin-top: 24px;">
         <div class="explicacao-teste-titulo">O que um IQR Alto ou Baixo Significa na Prática?</div>
         <p>
-            O IQR representa a <b>largura da zona de normalidade</b> do time (metade central das partidas da temporada):
+            O IQR representa a <b>largura da faixa central</b> do time (metade central das partidas da temporada):
         </p>
         <ul>
             <li>
@@ -227,7 +227,7 @@ Intervalo Interquartil
                 <code>s / IQR ≈ 0,74</code>. Entretanto, nas variáveis com outliers — como <b>Roubos de Bola</b> no Cavaliers (<code>s / IQR = 0,96</code>, onde
                 <code>s = 2,89</code> quase empata com <code>IQR = 3,00</code>), <b>Bloqueios</b> no Cavaliers (<code>s / IQR = 0,90</code>) e <b>Pontos</b> no Nets
                 (<code>s / IQR = 0,84</code>, com <code>s = 11,80</code> frente a <code>IQR = 14,00</code>) — os desvios quadráticos <code>(xᵢ − x̄)²</code> dos jogos
-                extremos inflam o desvio padrão, enquanto o <b>IQR possui ponto de ruptura (breakdown point) de 25% em cada cauda</b>, mantendo-se imune a esses valores.
+                extremos inflam o desvio padrão, enquanto o <b>IQR possui ponto de ruptura (breakdown point) de 25% em cada cauda</b>, sendo menos sensível a esses valores. Robustez não significa imunidade a alterações da amostra.
             </li>
         </ul>
     </section>
@@ -279,7 +279,7 @@ Intervalo Interquartil
             pois em distribuições próximas da normalidade esse intervalo abrange aproximadamente <b>99,3% dos dados</b> (~2,7 desvios padrão), sinalizando como
             outliers partidas genuinamente atípicas sem descartar variações normais de jogo. Já o critério <code>k = 3,0 × IQR</code> (cercas externas) detecta
             apenas anomalias severas ou erros grosseiros de registro — e, como mostra a tabela acima, <b>nenhuma partida ultrapassa <code>3,0 × IQR</code></b>
-            em nenhum dos dois times, confirmando que os outliers observados são desempenhos esportivos reais (ex.: <code>15, 15 e 17</code> roubos de bola e
+            em nenhum dos dois times, o que não comprova, por si só, que os registros estejam corretos. Os outliers observados ainda exigem revisão da fonte (ex.: <code>15, 15 e 17</code> roubos de bola e
             <code>11</code> bloqueios no Cavaliers; <code>66 e 77</code> pontos e <code>58</code> rebotes no Nets).
         </p>
         <p>
@@ -361,7 +361,7 @@ Intervalo Interquartil
             <li>
                 <b>Confirmação em Faltas Pessoais (PF):</b> No <b>Brooklyn Nets</b>, onde a assimetria foi a mais alta do estudo (<code>G₁ = +0,60</code>, moderada),
                 o IQR (<code>6,00 faltas</code>) é maior que o do Cavaliers (<code>5,00 faltas</code>), demonstrando que na variável com maior assimetria o IQR
-                descreve a dispersão real entre jogos de forma mais transparente e imune a distorções de escala do que o CV isolado.
+                descreve a dispersão real entre jogos de forma complementar, na unidade original e com menor sensibilidade às caudas do que o CV isolado.
             </li>
         </ul>
     </section>

@@ -1,6 +1,11 @@
-
-from flask import Flask, render_template, request
-from analises.tratamento import tratamentoPrevioBase, imprimirQualidadeDados
+from functools import lru_cache
+from math import isfinite
+from flask import Flask, abort, render_template, request
+from analises.tratamento import (
+    tratamentoPrevioBase, imprimirQualidadeDados, analisarValoresEspeciais,
+    excluirColunasPrevisao, colunasNumericas, metadadosColuna,
+)
+from analises.outliers import METODOS, analisarOutliersTime, detalharOutliers, interpretarOutliers
 from analises.mtc import *
 from analises.assimetria import (
     METADADOS_VARIAVEIS,
@@ -28,10 +33,30 @@ df = tratamentoPrevioBase()
 
 #imprimirQualidadeDados(df)
 
+@app.template_filter("numero")
+# Função para formatar números com duas casas decimais, tratando valores None e não finitos
+def formatarNumero(valor):
+    if valor is None:
+        return "Não aplicável"
+    try:
+        return f"{float(valor):.2f}" if isfinite(float(valor)) else "Não definido"
+    except (ValueError, TypeError):
+        return "Não definido"
+
+@lru_cache(maxsize=2)
+# Função para obter os resultados de outliers para um time específico
+def resultadosOutliers(time):
+    return analisarOutliersTime(df, time)
+
 # Rotas
 @app.route("/")
 def inicio():
-    return render_template("index.html")
+    qualidade = analisarValoresEspeciais(df)
+    base_previsao, colunas_excluidas = excluirColunasPrevisao(df)
+    return render_template("index.html", qualidade=qualidade,
+                           tipos_dados={c: str(df[c].dtype) for c in df.columns},
+                           colunas_excluidas=colunas_excluidas,
+                           quantidade_colunas_previsao=len(base_previsao.columns))
 
 @app.route("/mtc/<time>")
 def medidasTendCentral(time: str):
@@ -66,6 +91,7 @@ def medidasTendCentral(time: str):
         boxplotGrafico = boxplotGrafico,
         graficoComparativo = graficoComparativo,
         metadados_variaveis = METADADOS_VARIAVEIS,
+        interpretacoes=interpretarMtc(df, time),
     )
 
 @app.route("/assimetria/<time>")
@@ -95,6 +121,9 @@ def assimetria(time: str):
         comparativoTimes=comparativoTimes,
         graficoDistribuicao=graficoDistribuicao,
         graficoComparativo=graficoComparativo,
+        detalhe_cavs=calcularAssimetria(df, "Cleveland Cavaliers"),
+        quartis_cavs=calcularIqrTime(df, "Cleveland Cavaliers"),
+        quartis_nets=calcularIqrTime(df, "Brooklyn Nets"),
     )
 
 @app.route("/cv/<time>")
@@ -141,6 +170,25 @@ def intervInterquartil(time: str):
         quadroResumo=quadroResumo,
         graficoRobustez=graficoRobustez,
         graficoComparativo=graficoComparativo,
+    )
+
+@app.route("/outliers/<time>")
+# Função para exibir os valores inconsistentes e outliers de um time específico
+def valoresInconsistentesOutliers(time: str):
+    if time not in {"Cleveland Cavaliers", "Brooklyn Nets"}:
+        abort(404)
+    variavel = request.args.get("variavel", "pontos")
+    if variavel not in colunasNumericas(df):
+        variavel = "pontos"
+    resultados = resultadosOutliers(time)
+    qualidade = analisarValoresEspeciais(df[df["nome_time"] == time])
+    inconsistencias = {r["coluna"]: r["inconsistentes"] for r in qualidade["tabela"]}
+    return render_template(
+        "outliers.html", time_selecionado=time, variavel_selecionada=variavel,
+        variaveis={c: metadadosColuna(c) for c in colunasNumericas(df)},
+        metodos=METODOS, resultados=resultados, inconsistencias=inconsistencias,
+        interpretacoes=interpretarOutliers(resultados, variavel),
+        detalhes={m: detalharOutliers(df, resultados, variavel, m) for m in METODOS},
     )
 
 

@@ -45,6 +45,10 @@
                 class="{% if request.endpoint == 'intervInterquartil' %}active{% endif %}">
                     Intervalo Interquartil
                 </a>
+                <a href="{{ url_for('valoresInconsistentesOutliers', time='Cleveland Cavaliers') }}"
+                class="{% if request.endpoint == 'valoresInconsistentesOutliers' %}active{% endif %}">
+                    Outliers
+                </a>
             </nav>
 
         </div>

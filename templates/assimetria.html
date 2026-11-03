@@ -201,7 +201,7 @@ Assimetria
             Na maioria das variáveis — como <b>Pontos (PTS)</b>, <b>Assistências (AST)</b> e <b>Faltas Pessoais (PF)</b> — o coeficiente
             <b>G₁ de Fisher-Pearson</b>, o <b>Histograma + KDE</b> e o <b>Boxplot</b> contam exatamente a mesma história. Por exemplo, em
             <b>Faltas Pessoais</b> do <b>Brooklyn Nets</b> (<code>G₁ = +0,60</code>), a curva KDE apresenta um pico concentrado próximo a 20–21 faltas
-            e uma cauda longa que se estende para a direita (partidas com 29 a 31 faltas), confirmada pelos outliers superiores no Boxplot e pela
+            e uma cauda à direita. Há {{ quartis_nets.faltas_pessoais.qtd_outliers_15 }} outliers pela regra de 1,5×IQR: o máximo é {{ quartis_nets.faltas_pessoais.maior }} e a cerca superior é {{ quartis_nets.faltas_pessoais.lim_sup_15 }}; a igualdade não conta como outlier. A assimetria positiva é coerente com a
             média (<code>21,27</code>) superior à mediana (<code>21,00</code>). De modo análogo, em <b>Pontos</b> do <b>Brooklyn Nets</b>
             (<code>G₁ = -0,44</code>), a cauda esquerda alongada na curva KDE e os outliers inferiores no Boxplot confirmam a assimetria negativa.
         </p>
@@ -209,13 +209,13 @@ Assimetria
         <h3>Por que Ocorrem Divergências Aparentes em Variáveis Discretas de Contagem Baixa?</h3>
         <p>
             Em variáveis de contagem inteira e baixa amplitude — especialmente <b>Roubos de Bola (STL)</b> no <b>Cleveland Cavaliers</b>
-            (<code>G₁ = +0,42</code>, mas <code>Média = 8,57 &lt; Mediana = 9,00</code> e <code>Bowley = -0,50</code>) — observa-se uma divergência
+            (<code>G₁ = +0,42</code>, mas <code>Média = 8,57 &lt; Mediana = 9,00</code> e <code>Bowley = {{ detalhe_cavs.roubos_bola.bowley }}</code>) — observa-se uma divergência
             interessante entre o miolo da caixa (Boxplot) e o coeficiente de momento G₁:
         </p>
         <ul>
             <li>
                 <b>No centro da distribuição (Q₁ a Q₃):</b> Como os dados são números inteiros discretos, a mediana (<code>9,00</code>) fica mais próxima
-                de Q₃ (<code>10,00</code>) do que de Q₁ (<code>6,00</code>), fazendo o coeficiente de Bowley apontar assimetria negativa no intervalo central.
+                de Q₃ (<code>{{ quartis_cavs.roubos_bola.q3 }}</code>) do que de Q₁ (<code>{{ quartis_cavs.roubos_bola.q1 }}</code>), fazendo o coeficiente de Bowley apontar assimetria negativa no intervalo central.
             </li>
             <li>
                 <b>Nas caudas da distribuição:</b> Existem partidas atípicas na cauda direita (até 17 roubos de bola). Como o coeficiente G₁ de Fisher-Pearson

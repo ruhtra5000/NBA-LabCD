@@ -36,7 +36,7 @@ Medidas de Têndencia Central
 
     <h2>Média, Moda e Mediana</h2>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -50,10 +50,10 @@ Medidas de Têndencia Central
             <tbody>
                 {% for coluna, valores in estatMediaModaMediana.items() %}
                     <tr>
-                        <td>{{ coluna }}</td>
-                        <td>{{ valores.media }}</td>
-                        <td>{{ valores.mediana }}</td>
-                        <td>{{ valores.moda | join(", ") }}</td>
+                        <td>{{ metadados_variaveis[coluna].nome }} ({{ metadados_variaveis[coluna].unidade }})</td>
+                        <td>{{ valores.media|numero }}</td>
+                        <td>{{ valores.mediana|numero }}</td>
+                        <td>{{ valores.moda | map("numero") | join(", ") }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -61,8 +61,9 @@ Medidas de Têndencia Central
     </div>
 
     <h2>Medidas de Dispersão</h2>
+    <p>O desvio padrão e a variância são amostrais (n − 1). A variância usa a unidade da variável ao quadrado; as demais medidas mantêm a unidade original.</p>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -71,19 +72,19 @@ Medidas de Têndencia Central
                     <th>Maior valor</th>
                     <th>Amplitude</th>
                     <th>Desvio Padrão</th>
-                    <th>Variância</th>
+                    <th>Variância (unidade²)</th>
                 </tr>
             </thead>
 
             <tbody>
                 {% for coluna, valores in estatMedidasDispersao.items() %}
                 <tr>
-                    <td>{{ coluna }}</td>
-                    <td>{{ valores.menor_valor }}</td>
-                    <td>{{ valores.maior_valor }}</td>
-                    <td>{{ valores.amplitude }}</td>
-                    <td>{{ valores.desvio_padrao }}</td>
-                    <td>{{ valores.variancia }}</td>
+                    <td>{{ metadados_variaveis[coluna].nome }} ({{ metadados_variaveis[coluna].unidade }})</td>
+                    <td>{{ valores.menor_valor|numero }}</td>
+                    <td>{{ valores.maior_valor|numero }}</td>
+                    <td>{{ valores.amplitude|numero }}</td>
+                    <td>{{ valores.desvio_padrao|numero }}</td>
+                    <td>{{ valores.variancia|numero }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -92,7 +93,7 @@ Medidas de Têndencia Central
 
     <h2>Quartis e Outliers</h2>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -109,12 +110,12 @@ Medidas de Têndencia Central
             <tbody>
                 {% for coluna, valores in estatQuartisOutliers.items() %}
                 <tr>
-                    <td>{{ coluna }}</td>
-                    <td>{{ valores.q1 }}</td>
-                    <td>{{ valores.q3 }}</td>
-                    <td>{{ valores.iqr }}</td>
-                    <td>{{ valores.limite_inferior }}</td>
-                    <td>{{ valores.limite_superior }}</td>
+                    <td>{{ metadados_variaveis[coluna].nome }} ({{ metadados_variaveis[coluna].unidade }})</td>
+                    <td>{{ valores.q1|numero }}</td>
+                    <td>{{ valores.q3|numero }}</td>
+                    <td>{{ valores.iqr|numero }}</td>
+                    <td>{{ valores.limite_inferior|numero }}</td>
+                    <td>{{ valores.limite_superior|numero }}</td>
                     <td>{{ valores.quantidade }}</td>
                 </tr>
                 {% endfor %}
@@ -126,7 +127,7 @@ Medidas de Têndencia Central
         <h2>Outliers identificados</h2>
 
         {% if listaValOutliers %}
-            <div class="table-container">
+            <div class="tabela-container">
                 <table>
                     <thead>
                         <tr>
@@ -143,7 +144,7 @@ Medidas de Têndencia Central
                                 <td>{{ outlier.variavel }}</td>
                                 <td>{{ outlier.data.strftime('%d/%m/%Y') }}</td>
                                 <td>{{ outlier.confronto }}</td>
-                                <td>{{ outlier.valor }}</td>
+                                <td>{{ outlier.valor|numero }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -155,6 +156,7 @@ Medidas de Têndencia Central
     </section>
 
     <h2>Boxplot - {{ time_selecionado }}</h2>
+    <p>As cercas teóricas de 1,5×IQR são indicadas por cruzes. As hastes terminam nos valores observados mais extremos dentro das cercas. A legenda identifica os quartis, a média, a mediana, a moda e os outliers superiores e inferiores.</p>
 
     <div class="grafico-container">
         {{ boxplotGrafico | safe }}
@@ -169,7 +171,7 @@ Medidas de Têndencia Central
     <p>
         Enquanto o IQR utiliza os quartis Q1 e Q3 para realização do cálculo, o Z-Score utiliza 
         a média e o desvio padrão. Comumente, usando o Z-Score, toma-se como outlier qualquer valor 
-        que esteja 4+ desvios padrão acima ou abaixo da média.
+        com |z| &gt; 3, usando desvio padrão amostral. Esse é o critério adotado na seção <a href="{{ url_for('valoresInconsistentesOutliers', time=time_selecionado, variavel=variavel_selecionada) }}#zscore">Z-score</a>. No comparativo entre times, o Z-score pode contextualizar se um valor está distante do desempenho típico de sua própria equipe; as barras abaixo mantêm os valores nas unidades originais.
     </p>
 
     <h2>Comparativo de indicadores estatísticos - Cleveland Cavaliers VS Brooklyn Nets</h2>
@@ -191,5 +193,11 @@ Medidas de Têndencia Central
     <div class="grafico-container">
         {{ graficoComparativo | safe }}
     </div>
+
+    <p>O gráfico compara separadamente medidas na unidade original, variância na unidade ao quadrado e quantidade de outliers em jogos. Cada moda aparece como um valor numérico; quando há empate, todos os valores mais frequentes são apresentados.</p>
+    <h2>Interpretação das medidas de tendência central</h2>
+    <div class="tabela-container"><table><thead><tr><th>Variável</th><th>Análise dos resultados</th></tr></thead><tbody>
+    {% for item in interpretacoes %}<tr><td>{{ item.variavel }}</td><td>{{ item.analise }}</td></tr>{% endfor %}
+    </tbody></table></div>
 
 {% endblock %}
