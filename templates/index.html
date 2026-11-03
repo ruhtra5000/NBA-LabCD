@@ -20,7 +20,7 @@ Lab. de Ciência de Dados
     <p>
         Projeto feito sob uma base de dados contendo estatísticas individuais das equipes da NBA por partida, 
         incluindo resultados, desempenho ofensivo e defensivo e aproveitamento ao longo 
-        da temporada. A base completa é composta por <u>28 colunas</u> e <u>2238 registros de partida</u>.
+        da temporada. A base completa é composta por <u>{{ qualidade.colunas }} colunas</u> e <u>{{ qualidade.linhas }} registros de equipe por partida</u>.
     </p>
 
     <p>
@@ -42,7 +42,7 @@ Lab. de Ciência de Dados
         equipes da NBA por partida.
     </p>
 
-    <div>
+    <div class="tabela-container">
         <table>
             <thead>
                 <tr>
@@ -50,22 +50,25 @@ Lab. de Ciência de Dados
                     <th>Nome antigo</th>
                     <th>Nome novo</th>
                     <th>Significado</th>
+                    <th>Tipo em Python</th>
                 </tr>
             </thead>
 
             <tbody>
                 <tr>
-                    <td class="tipo numerica">Numérica</td>
+                    <td class="tipo categorica">Categórica (identificador numérico)</td>
                     <td>Team_ID</td>
                     <td>id_time</td>
                     <td>Identificador único da equipe.</td>
+                    <td>{{ tipos_dados["id_time"] }}</td>
                 </tr>
 
                 <tr>
-                    <td class="tipo numerica">Numérica</td>
+                    <td class="tipo categorica">Categórica (identificador numérico)</td>
                     <td>Game_ID</td>
                     <td>id_partida</td>
                     <td>Identificador único da partida.</td>
+                    <td>{{ tipos_dados["id_partida"] }}</td>
                 </tr>
 
                 <tr>
@@ -73,6 +76,7 @@ Lab. de Ciência de Dados
                     <td>GAME_DATE</td>
                     <td>data_partida</td>
                     <td>Data em que a partida ocorreu.</td>
+                    <td>{{ tipos_dados["data_partida"] }}</td>
                 </tr>
 
                 <tr>
@@ -80,13 +84,15 @@ Lab. de Ciência de Dados
                     <td>MATCHUP</td>
                     <td>confronto</td>
                     <td>Identifica o adversário e o mando de campo. "vs." indica partida em casa e "@" indica partida fora.</td>
+                    <td>{{ tipos_dados["confronto"] }}</td>
                 </tr>
 
                 <tr>
                     <td class="tipo binaria">Binária</td>
                     <td>WL</td>
                     <td>resultado</td>
-                    <td>Resultado da partida: vitória ou derrota.</td>
+                    <td>Resultado da partida: 1 = vitória; 0 = derrota.</td>
+                    <td>{{ tipos_dados["resultado"] }}</td>
                 </tr>
 
                 <tr>
@@ -94,6 +100,7 @@ Lab. de Ciência de Dados
                     <td>W</td>
                     <td>vitorias_acumuladas</td>
                     <td>Total de vitórias da equipe na temporada até aquela partida.</td>
+                    <td>{{ tipos_dados["vitorias_acumuladas"] }}</td>
                 </tr>
 
                 <tr>
@@ -101,6 +108,7 @@ Lab. de Ciência de Dados
                     <td>L</td>
                     <td>derrotas_acumuladas</td>
                     <td>Total de derrotas da equipe na temporada até aquela partida.</td>
+                    <td>{{ tipos_dados["derrotas_acumuladas"] }}</td>
                 </tr>
 
                 <tr>
@@ -108,6 +116,7 @@ Lab. de Ciência de Dados
                     <td>W_PCT</td>
                     <td>percentual_vitorias</td>
                     <td>Proporção de vitórias da equipe em relação ao total de partidas disputadas na temporada.</td>
+                    <td>{{ tipos_dados["percentual_vitorias"] }}</td>
                 </tr>
 
                 <tr>
@@ -115,6 +124,7 @@ Lab. de Ciência de Dados
                     <td>MIN</td>
                     <td>minutos_jogados</td>
                     <td>Total de minutos disputados pela equipe na partida.</td>
+                    <td>{{ tipos_dados["minutos_jogados"] }}</td>
                 </tr>
 
                 <tr>
@@ -122,6 +132,7 @@ Lab. de Ciência de Dados
                     <td>FGM</td>
                     <td>arremessos_convertidos</td>
                     <td>Quantidade de arremessos de quadra convertidos, incluindo cestas de dois e três pontos.</td>
+                    <td>{{ tipos_dados["arremessos_convertidos"] }}</td>
                 </tr>
 
                 <tr>
@@ -129,6 +140,7 @@ Lab. de Ciência de Dados
                     <td>FGA</td>
                     <td>arremessos_tentados</td>
                     <td>Quantidade de arremessos de quadra tentados.</td>
+                    <td>{{ tipos_dados["arremessos_tentados"] }}</td>
                 </tr>
 
                 <tr>
@@ -136,6 +148,7 @@ Lab. de Ciência de Dados
                     <td>FG_PCT</td>
                     <td>percentual_arremessos</td>
                     <td>Percentual de aproveitamento nos arremessos de quadra.</td>
+                    <td>{{ tipos_dados["percentual_arremessos"] }}</td>
                 </tr>
 
                 <tr>
@@ -143,6 +156,7 @@ Lab. de Ciência de Dados
                     <td>FG3M</td>
                     <td>cestas_3_pontos_convertidas</td>
                     <td>Quantidade de cestas de três pontos convertidas.</td>
+                    <td>{{ tipos_dados["cestas_3_pontos_convertidas"] }}</td>
                 </tr>
 
                 <tr>
@@ -150,6 +164,7 @@ Lab. de Ciência de Dados
                     <td>FG3A</td>
                     <td>tentativas_3_pontos</td>
                     <td>Quantidade de tentativas de arremessos de três pontos.</td>
+                    <td>{{ tipos_dados["tentativas_3_pontos"] }}</td>
                 </tr>
 
                 <tr>
@@ -157,6 +172,7 @@ Lab. de Ciência de Dados
                     <td>FG3_PCT</td>
                     <td>percentual_3_pontos</td>
                     <td>Percentual de aproveitamento nos arremessos de três pontos.</td>
+                    <td>{{ tipos_dados["percentual_3_pontos"] }}</td>
                 </tr>
 
                 <tr>
@@ -164,6 +180,7 @@ Lab. de Ciência de Dados
                     <td>FTM</td>
                     <td>lances_livres_convertidos</td>
                     <td>Quantidade de lances livres convertidos.</td>
+                    <td>{{ tipos_dados["lances_livres_convertidos"] }}</td>
                 </tr>
 
                 <tr>
@@ -171,6 +188,7 @@ Lab. de Ciência de Dados
                     <td>FTA</td>
                     <td>lances_livres_tentados</td>
                     <td>Quantidade de lances livres tentados.</td>
+                    <td>{{ tipos_dados["lances_livres_tentados"] }}</td>
                 </tr>
 
                 <tr>
@@ -178,6 +196,7 @@ Lab. de Ciência de Dados
                     <td>FT_PCT</td>
                     <td>percentual_lances_livres</td>
                     <td>Percentual de aproveitamento nos lances livres.</td>
+                    <td>{{ tipos_dados["percentual_lances_livres"] }}</td>
                 </tr>
 
                 <tr>
@@ -185,6 +204,7 @@ Lab. de Ciência de Dados
                     <td>OREB</td>
                     <td>rebotes_ofensivos</td>
                     <td>Quantidade de rebotes ofensivos conquistados pela equipe.</td>
+                    <td>{{ tipos_dados["rebotes_ofensivos"] }}</td>
                 </tr>
 
                 <tr>
@@ -192,6 +212,7 @@ Lab. de Ciência de Dados
                     <td>DREB</td>
                     <td>rebotes_defensivos</td>
                     <td>Quantidade de rebotes defensivos conquistados pela equipe.</td>
+                    <td>{{ tipos_dados["rebotes_defensivos"] }}</td>
                 </tr>
 
                 <tr>
@@ -199,6 +220,7 @@ Lab. de Ciência de Dados
                     <td>REB</td>
                     <td>total_rebotes</td>
                     <td>Total de rebotes conquistados, somando os ofensivos e defensivos.</td>
+                    <td>{{ tipos_dados["total_rebotes"] }}</td>
                 </tr>
 
                 <tr>
@@ -206,6 +228,7 @@ Lab. de Ciência de Dados
                     <td>AST</td>
                     <td>assistencias</td>
                     <td>Quantidade de assistências realizadas pela equipe.</td>
+                    <td>{{ tipos_dados["assistencias"] }}</td>
                 </tr>
 
                 <tr>
@@ -213,6 +236,7 @@ Lab. de Ciência de Dados
                     <td>STL</td>
                     <td>roubos_bola</td>
                     <td>Quantidade de roubos de bola realizados pela equipe.</td>
+                    <td>{{ tipos_dados["roubos_bola"] }}</td>
                 </tr>
 
                 <tr>
@@ -220,6 +244,7 @@ Lab. de Ciência de Dados
                     <td>BLK</td>
                     <td>bloqueios</td>
                     <td>Quantidade de arremessos adversários bloqueados pela equipe.</td>
+                    <td>{{ tipos_dados["bloqueios"] }}</td>
                 </tr>
 
                 <tr>
@@ -227,6 +252,7 @@ Lab. de Ciência de Dados
                     <td>TOV</td>
                     <td>perdas_bola</td>
                     <td>Quantidade de vezes que a equipe perdeu a posse de bola.</td>
+                    <td>{{ tipos_dados["perdas_bola"] }}</td>
                 </tr>
 
                 <tr>
@@ -234,6 +260,7 @@ Lab. de Ciência de Dados
                     <td>PF</td>
                     <td>faltas_pessoais</td>
                     <td>Quantidade de faltas pessoais cometidas pela equipe.</td>
+                    <td>{{ tipos_dados["faltas_pessoais"] }}</td>
                 </tr>
 
                 <tr>
@@ -241,6 +268,7 @@ Lab. de Ciência de Dados
                     <td>PTS</td>
                     <td>pontos</td>
                     <td>Total de pontos marcados pela equipe na partida.</td>
+                    <td>{{ tipos_dados["pontos"] }}</td>
                 </tr>
 
                 <tr>
@@ -248,26 +276,32 @@ Lab. de Ciência de Dados
                     <td>TEAM_NAME</td>
                     <td>nome_time</td>
                     <td>Nome completo da equipe da NBA.</td>
+                    <td>{{ tipos_dados["nome_time"] }}</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <h2>Métodos e análise de valores ausentes e inconsistências</h2>
+    <h2>Conversão de variáveis categóricas para numéricas</h2>
+    <p>O campo WL, renomeado para resultado, já contém 1 para vitória e 0 para derrota no CSV entregue. A rotina aceita também os rótulos W e L e os converte para esses códigos. As colunas W e L são contagens numéricas de vitórias e derrotas acumuladas; seus nomes são vitorias_acumuladas e derrotas_acumuladas. A conversão numérica é validada no carregamento.</p>
 
-    <p>
-        Após análise completa da base de dados, pode-se concluir que os dados tem uma ótima qualidade, 
-        pois os tipos dos dados estão, de forma geral, corretos, e, além disso, <b>NÃO</b> foram encontrados:
-    </p>
+    <h2>Exclusão de colunas para previsões</h2>
+    <p>A matriz numérica é obtida por exclusão das cinco representações abaixo, passando de {{ qualidade.colunas }} para {{ quantidade_colunas_previsao }} colunas. A base completa continua sendo usada na análise descritiva e nos filtros de equipe. As demais medidas numéricas e o resultado binário são mantidos; não descartamos estatísticas úteis somente por estarem fora das sete variáveis do exercício. Antes de um futuro treinamento, o alvo e a disponibilidade temporal dos atributos precisam ser definidos para evitar vazamento do resultado da própria partida.</p>
+    <div class="tabela-container"><table><thead><tr><th>Coluna excluída da matriz numérica</th><th>Justificativa no contexto da base</th></tr></thead><tbody>
+    {% for item in colunas_excluidas %}<tr><td>{{ item.coluna }}</td><td>{{ item.motivo }}</td></tr>{% endfor %}
+    </tbody></table></div>
 
-    <ul>
-        <li>Valores ausentes em nenhuma coluna;</li>
-        <li>Registros de partida duplicados;</li>
-        <li>Valores negativos em colunas númericas;</li>
-        <li>Valores inconsistentes em colunas que indicam percentuais;</li>
-        <li>Soma total de rebotes incorreta;</li>
-        <li>Arremessos, cestas de três pontos e lances livres convertidos maiores que os tentados.</li>
-    </ul>
+    <h2>Valores especiais</h2>
+    <p>A tabela apresenta as contagens calculadas na base completa, por coluna. Zero é válido para derrota, contagens esportivas e aproveitamentos; identificadores precisam ser positivos. Contagens não admitem negativos nem frações, e os percentuais são proporções em [0, 1]. Regras entre campos verificam tentativas/conversões, composição dos rebotes e dos pontos. Cada linha é contada uma vez como inconsistente por coluna, mesmo que viole mais de uma regra. Uma relação inválida marca os campos envolvidos para investigação, sem determinar automaticamente qual originou o erro.</p>
+    <div class="tabela-container"><table><thead><tr><th>Coluna</th><th>Zeros</th><th>Negativos</th><th>Ausentes</th><th>Ausentes (%)</th><th>Inconsistentes</th></tr></thead><tbody>
+    {% for item in qualidade.tabela %}<tr><td>{{ item.coluna }}</td><td>{{ item.zeros if item.zeros is not none else 'Não aplicável' }}</td><td>{{ item.negativos if item.negativos is not none else 'Não aplicável' }}</td><td>{{ item.ausentes }}</td><td>{{ item.ausentes_pct|numero }}%</td><td>{{ item.inconsistentes }}</td></tr>{% endfor %}
+    </tbody></table></div>
+    <p>Foram encontrados {{ qualidade.duplicados }} registros completamente duplicados, {{ qualidade.duplicados_chave }} repetições da chave equipe/partida e {{ qualidade.linhas_inconsistentes }} linhas com inconsistência. Uma mesma partida registrada para duas equipes diferentes não constitui uma duplicata.</p>
+
+    <h2>Valores ausentes</h2>
+    <p>A base contém {{ qualidade.ausentes }} células ausentes. {% if qualidade.ausentes == 0 %}Os procedimentos de investigação de ausência descritos abaixo não foram executados, pois não há padrões de ausência a investigar nesta base.{% else %}A contagem sozinha não permite identificar o mecanismo de ausência; essa investigação depende do contexto de coleta e das variáveis observadas.{% endif %}</p>
+
+
 
     <h3>MCAR, MAR, MNAR</h3>
 
@@ -371,5 +405,8 @@ Lab. de Ciência de Dados
             de ausência, auxiliando na investigação de possíveis mecanismos MAR.
         </p>
     </section>
+
+    <h2>Valores inconsistentes e outliers</h2>
+    <p>As quantidades por coluna e por equipe, os registros sinalizados e a teoria dos métodos Z-score, IQR, Grubbs, ECOD, K-NN, DBSCAN e LOF estão na seção <a href="{{ url_for('valoresInconsistentesOutliers', time='Cleveland Cavaliers') }}">Valores inconsistentes e outliers</a>. Um valor atípico não comprova erro de registro e deve ser interpretado no contexto das partidas.</p>
 
 {% endblock %}
