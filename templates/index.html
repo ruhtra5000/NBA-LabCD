@@ -28,12 +28,6 @@ Lab. de Ciência de Dados
         <b>Brooklyn Nets</b>.
     </p>
 
-    <p>
-        O campo "GAME_DATE" representa a data em que uma partida ocorreu, esse campo foi 
-        tratado transformando-o do formato textual para o formato datetime, permitindo 
-        comparações temporais de forma mais simplificada.
-    </p>
-
     <h2>Dicionário de Dados</h2>
 
     <p>
@@ -282,8 +276,20 @@ Lab. de Ciência de Dados
         </table>
     </div>
 
-    <h2>Conversão de variáveis categóricas para numéricas</h2>
-    <p>O campo WL, renomeado para resultado, já contém 1 para vitória e 0 para derrota no CSV entregue. A rotina aceita também os rótulos W e L e os converte para esses códigos. As colunas W e L são contagens numéricas de vitórias e derrotas acumuladas; seus nomes são vitorias_acumuladas e derrotas_acumuladas. A conversão numérica é validada no carregamento.</p>
+    <h2>Tratamento inicial da base</h2>
+    
+    <p>
+        O campo "GAME_DATE" representa a data em que uma partida ocorreu, esse campo foi 
+        tratado transformando-o do formato textual para o formato datetime, permitindo 
+        comparações temporais de forma mais simplificada.
+    </p>
+
+    <p>
+        O campo WL, renomeado para resultado, já contém 1 para vitória e 0 para derrota no CSV entregue. 
+        A rotina aceita também os rótulos W e L e os converte para esses códigos. As colunas W e L são contagens 
+        numéricas de vitórias e derrotas acumuladas; seus nomes são vitorias_acumuladas e derrotas_acumuladas. 
+        A conversão numérica é validada no carregamento.
+    </p>
 
     <h2>Exclusão de colunas para previsões</h2>
     <p>A matriz numérica é obtida por exclusão das cinco representações abaixo, passando de {{ qualidade.colunas }} para {{ quantidade_colunas_previsao }} colunas. A base completa continua sendo usada na análise descritiva e nos filtros de equipe. As demais medidas numéricas e o resultado binário são mantidos; não descartamos estatísticas úteis somente por estarem fora das sete variáveis do exercício. Antes de um futuro treinamento, o alvo e a disponibilidade temporal dos atributos precisam ser definidos para evitar vazamento do resultado da própria partida.</p>
