@@ -1,12 +1,15 @@
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from analises.assimetria import METADADOS_VARIAVEIS
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Leitura do CSV e tratamento inicial da base
 def tratamentoPrevioBase():
     df = pd.read_csv(
-            "dados/stats_times_regular_final.csv",  # Nome da base (.csv)
-            parse_dates=["GAME_DATE"]               # Tratamento de data
+            BASE_DIR / "dados" / "stats_times_regular_final.csv",   # Nome da base (.csv)
+            parse_dates=["GAME_DATE"]                               # Tratamento de data
         )
 
     # Renomeação de colunas
