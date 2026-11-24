@@ -51,6 +51,9 @@ def tratamentoPrevioBase():
 
     return df
 
+# Disponibilização geral do dataframe
+df = tratamentoPrevioBase()
+
 # Impressão de informações sobre a qualidade dos dados da base
 def imprimirQualidadeDados(df: pd.DataFrame):
     # Calculo de variáveis e constantes
