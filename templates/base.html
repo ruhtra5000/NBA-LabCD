@@ -26,28 +26,9 @@
                     Início
                 </a>
 
-                <a href="{{ url_for('medidasTendCentral', time='Cleveland Cavaliers') }}"
-                class="{% if request.endpoint == 'medidasTendCentral' %}active{% endif %}">
-                    Medidas de Tendência Central
-                </a>
-
-                <a href="{{ url_for('assimetria', time='Cleveland Cavaliers') }}"
-                class="{% if request.endpoint == 'assimetria' %}active{% endif %}">
-                    Assimetria
-                </a>
-
-                <a href="{{ url_for('coefVariacao', time='Cleveland Cavaliers') }}"
-                class="{% if request.endpoint == 'coefVariacao' %}active{% endif %}">
-                    Coeficiente de Variação
-                </a>
-
-                <a href="{{ url_for('intervInterquartil', time='Cleveland Cavaliers') }}"
-                class="{% if request.endpoint == 'intervInterquartil' %}active{% endif %}">
-                    Intervalo Interquartil
-                </a>
-                <a href="{{ url_for('valoresInconsistentesOutliers', time='Cleveland Cavaliers') }}"
-                class="{% if request.endpoint == 'valoresInconsistentesOutliers' %}active{% endif %}">
-                    Outliers
+                <a href="{{ url_for('proj1.projeto1') }}"
+                class="{% if request.endpoint == 'proj1.projeto1' %}active{% endif %}">
+                    Projeto 1
                 </a>
             </nav>
 

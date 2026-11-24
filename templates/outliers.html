@@ -10,12 +10,12 @@ Valores inconsistentes e outliers
     <section class="selecao-times">
         <h2>Selecione uma equipe</h2>
         <div class="botoes-times">
-            <a href="{{ url_for('valoresInconsistentesOutliers', time='Cleveland Cavaliers', variavel=variavel_selecionada) }}"
+            <a href="{{ url_for('proj1.valoresInconsistentesOutliers', time='Cleveland Cavaliers', variavel=variavel_selecionada) }}"
                class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
                 <img src="{{ url_for('static', filename='images/cavaliers.png') }}" alt="Logo Cleveland Cavaliers">
                 <span>Cleveland Cavaliers</span>
             </a>
-            <a href="{{ url_for('valoresInconsistentesOutliers', time='Brooklyn Nets', variavel=variavel_selecionada) }}"
+            <a href="{{ url_for('proj1.valoresInconsistentesOutliers', time='Brooklyn Nets', variavel=variavel_selecionada) }}"
                class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
                 <img src="{{ url_for('static', filename='images/nets.png') }}" alt="Logo Brooklyn Nets">
                 <span>Brooklyn Nets</span>
@@ -33,7 +33,7 @@ Valores inconsistentes e outliers
                 <tr>
                     <td>{{ variaveis[c].nome }}</td><td>{{ inconsistencias[c] }}</td><td>{{ resultados_coluna.iqr.n }}</td>
                     {% for m in metodos %}
-                    <td>{% if resultados_coluna[m].status.startswith('Não aplicável') %}Não aplicável{% else %}<a href="{{ url_for('valoresInconsistentesOutliers', time=time_selecionado, variavel=c) }}#{{ m }}">{{ resultados_coluna[m].quantidade }}</a>{% endif %}</td>
+                    <td>{% if resultados_coluna[m].status.startswith('Não aplicável') %}Não aplicável{% else %}<a href="{{ url_for('proj1.valoresInconsistentesOutliers', time=time_selecionado, variavel=c) }}#{{ m }}">{{ resultados_coluna[m].quantidade }}</a>{% endif %}</td>
                     {% endfor %}
                 </tr>
                 {% endfor %}
@@ -44,7 +44,7 @@ Valores inconsistentes e outliers
     <h2>Selecione uma variável</h2>
     <div class="botoes-variaveis">
         {% for c, meta in variaveis.items() %}
-        <a href="{{ url_for('valoresInconsistentesOutliers', time=time_selecionado, variavel=c) }}"
+        <a href="{{ url_for('proj1.valoresInconsistentesOutliers', time=time_selecionado, variavel=c) }}"
            class="botao-variavel {% if c == variavel_selecionada %}selecionado{% endif %}">{{ meta.nome }}</a>
         {% endfor %}
     </div>
@@ -56,7 +56,7 @@ Valores inconsistentes e outliers
     <h2 id="{{ m }}">{{ 'Teste de Grubbs' if m == 'grubbs' else nome }}</h2>
     <section class="explicacao-teste">
         {% if m == 'iqr' %}
-        <p>IQR = Q3 − Q1. O critério já utilizado nos boxplots sinaliza valores estritamente fora de Q1 − 1,5×IQR e Q3 + 1,5×IQR. Os quartis usam interpolação linear. A teoria, os limites de 1,5×IQR e 3×IQR e a comparação entre times estão na seção <a href="{{ url_for('intervInterquartil', time=time_selecionado) }}">Intervalo Interquartil</a>.</p>
+        <p>IQR = Q3 − Q1. O critério já utilizado nos boxplots sinaliza valores estritamente fora de Q1 − 1,5×IQR e Q3 + 1,5×IQR. Os quartis usam interpolação linear. A teoria, os limites de 1,5×IQR e 3×IQR e a comparação entre times estão na seção <a href="{{ url_for('proj1.intervInterquartil', time=time_selecionado) }}">Intervalo Interquartil</a>.</p>
         {% elif m == 'zscore' %}
         <p>Z-score = (x − média)/s, com desvio padrão amostral s (denominador n − 1). Adotamos |z| &gt; 3 como limiar de triagem: valores a mais de três desvios da média são sinalizados. A média e o desvio são sensíveis às caudas; por isso, em contagens assimétricas, o resultado pode divergir do IQR. O limiar é uma decisão metodológica do grupo, não uma comprovação de erro de registro.</p>
         {% elif m == 'grubbs' %}

@@ -77,7 +77,7 @@ Coeficiente de Variação
 
         <div class="botoes-times">
 
-            <a href="{{ url_for('coefVariacao', time='Cleveland Cavaliers') }}"
+            <a href="{{ url_for('proj1.coefVariacao', time='Cleveland Cavaliers') }}"
             class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
 
                 <img src="{{ url_for('static', filename='images/cavaliers.png') }}"
@@ -86,7 +86,7 @@ Coeficiente de Variação
                 <span>Cleveland Cavaliers</span>
             </a>
 
-            <a href="{{ url_for('coefVariacao', time='Brooklyn Nets') }}"
+            <a href="{{ url_for('proj1.coefVariacao', time='Brooklyn Nets') }}"
             class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
 
                 <img src="{{ url_for('static', filename='images/nets.png') }}"

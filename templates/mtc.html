@@ -13,7 +13,7 @@ Medidas de Têndencia Central
 
         <div class="botoes-times">
 
-            <a href="{{ url_for('medidasTendCentral', time='Cleveland Cavaliers') }}"
+            <a href="{{ url_for('proj1.medidasTendCentral', time='Cleveland Cavaliers') }}"
             class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
 
                 <img src="{{ url_for('static', filename='images/cavaliers.png') }}"
@@ -22,7 +22,7 @@ Medidas de Têndencia Central
                 <span>Cleveland Cavaliers</span>
             </a>
 
-            <a href="{{ url_for('medidasTendCentral', time='Brooklyn Nets') }}"
+            <a href="{{ url_for('proj1.medidasTendCentral', time='Brooklyn Nets') }}"
             class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
 
                 <img src="{{ url_for('static', filename='images/nets.png') }}"
@@ -171,7 +171,7 @@ Medidas de Têndencia Central
     <p>
         Enquanto o IQR utiliza os quartis Q1 e Q3 para realização do cálculo, o Z-Score utiliza 
         a média e o desvio padrão. Comumente, usando o Z-Score, toma-se como outlier qualquer valor 
-        com |z| &gt; 3, usando desvio padrão amostral. Esse é o critério adotado na seção <a href="{{ url_for('valoresInconsistentesOutliers', time=time_selecionado, variavel=variavel_selecionada) }}#zscore">Z-score</a>. No comparativo entre times, o Z-score pode contextualizar se um valor está distante do desempenho típico de sua própria equipe; as barras abaixo mantêm os valores nas unidades originais.
+        com |z| &gt; 3, usando desvio padrão amostral. Esse é o critério adotado na seção <a href="{{ url_for('proj1.valoresInconsistentesOutliers', time=time_selecionado, variavel=variavel_selecionada) }}#zscore">Z-score</a>. No comparativo entre times, o Z-score pode contextualizar se um valor está distante do desempenho típico de sua própria equipe; as barras abaixo mantêm os valores nas unidades originais.
     </p>
 
     <h2>Comparativo de indicadores estatísticos - Cleveland Cavaliers VS Brooklyn Nets</h2>
@@ -183,7 +183,7 @@ Medidas de Têndencia Central
 
     <div class="botoes-variaveis">
         {% for chave, meta in metadados_variaveis.items() %}
-            <a href="{{ url_for('medidasTendCentral', time=time_selecionado, variavel=chave) }}"
+            <a href="{{ url_for('proj1.medidasTendCentral', time=time_selecionado, variavel=chave) }}"
                class="botao-variavel {% if variavel_selecionada == chave %}selecionado{% endif %}">
                 {{ meta.nome }}
             </a>

@@ -1,0 +1,140 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<main class="pagina-analises">
+
+    <header class="cabecalho-analises">
+        <h1>Análises estatísticas</h1>
+        <p>
+            Explore as análises estatísticas dos times
+            Cleveland Cavaliers e Brooklyn Nets.
+        </p>
+    </header>
+
+    <style>
+        .pagina-analises {
+            margin: 0px auto;
+        }
+
+        .cabecalho-analises {
+            margin-bottom: 30px;
+        }
+
+        .cabecalho-analises h1 {
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .cabecalho-analises p {
+            color: #777;
+        }
+
+        .grid-analises {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 25px;
+        }
+
+        .card-analise {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 140px;
+            padding: 0px 25px 25px 25px;
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .card-analise:hover {
+            transform: translateY(-4px);
+            border-color: #5276a5;
+            box-shadow: 0 5px 18px rgba(38, 59, 94, 0.10);
+        }
+
+        .card-analise p {
+            color: #777;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .card-link {
+            color: #345987;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .pagina-analises {
+                width: 90%;
+            }
+
+            .grid-analises {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <section class="grid-analises">
+
+        <a href="{{ url_for('proj1.medidasTendCentral', time='Cleveland Cavaliers') }}"
+           class="card-analise">
+            <h2>Medidas de Tendência Central</h2>
+            <p>
+                Análise da média, mediana e moda das variáveis
+                estatísticas dos times.
+            </p>
+            <span class="card-link">Acessar análise →</span>
+        </a>
+
+        <a href="{{ url_for('proj1.assimetria', time='Cleveland Cavaliers') }}"
+           class="card-analise">
+            <h2>Assimetria</h2>
+            <p>
+                Análise do grau de assimetria e da distribuição
+                dos dados estatísticos.
+            </p>
+            <span class="card-link">Acessar análise →</span>
+        </a>
+
+        <a href="{{ url_for('proj1.coefVariacao', time='Cleveland Cavaliers') }}"
+           class="card-analise">
+            <h2>Coeficiente de Variação</h2>
+            <p>
+                Avaliação da dispersão relativa e da variabilidade
+                dos dados.
+            </p>
+            <span class="card-link">Acessar análise →</span>
+        </a>
+
+        <a href="{{ url_for('proj1.intervInterquartil', time='Cleveland Cavaliers') }}"
+           class="card-analise">
+            <h2>Intervalo Interquartil</h2>
+            <p>
+                Análise da dispersão dos dados por meio dos quartis
+                e do intervalo interquartil.
+            </p>
+            <span class="card-link">Acessar análise →</span>
+        </a>
+
+        <a href="{{ url_for('proj1.valoresInconsistentesOutliers', time='Cleveland Cavaliers') }}"
+           class="card-analise">
+            <h2>Outliers</h2>
+            <p>
+                Identificação e análise de valores atípicos
+                presentes nas variáveis.
+            </p>
+            <span class="card-link">Acessar análise →</span>
+        </a>
+
+    </section>
+
+</main>
+
+{% endblock %}

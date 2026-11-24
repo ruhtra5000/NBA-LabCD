@@ -54,7 +54,7 @@ Assimetria
 
         <div class="botoes-times">
 
-            <a href="{{ url_for('assimetria', time='Cleveland Cavaliers', variavel=variavel_selecionada) }}"
+            <a href="{{ url_for('proj1.assimetria', time='Cleveland Cavaliers', variavel=variavel_selecionada) }}"
             class="botao-time {% if time_selecionado == 'Cleveland Cavaliers' %}selecionado{% endif %}">
 
                 <img src="{{ url_for('static', filename='images/cavaliers.png') }}"
@@ -63,7 +63,7 @@ Assimetria
                 <span>Cleveland Cavaliers</span>
             </a>
 
-            <a href="{{ url_for('assimetria', time='Brooklyn Nets', variavel=variavel_selecionada) }}"
+            <a href="{{ url_for('proj1.assimetria', time='Brooklyn Nets', variavel=variavel_selecionada) }}"
             class="botao-time {% if time_selecionado == 'Brooklyn Nets' %}selecionado{% endif %}">
 
                 <img src="{{ url_for('static', filename='images/nets.png') }}"
@@ -182,7 +182,7 @@ Assimetria
 
     <div class="botoes-variaveis">
         {% for chave, meta in metadados_variaveis.items() %}
-            <a href="{{ url_for('assimetria', time=time_selecionado, variavel=chave) }}"
+            <a href="{{ url_for('proj1.assimetria', time=time_selecionado, variavel=chave) }}"
                class="botao-variavel {% if variavel_selecionada == chave %}selecionado{% endif %}">
                 {{ meta.nome }}
             </a>
