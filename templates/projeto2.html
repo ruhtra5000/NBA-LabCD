@@ -1,0 +1,100 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<main class="pagina-analises">
+    <style>
+        .pagina-analises {
+            margin: 0px auto;
+        }
+
+        .cabecalho-analises {
+            margin-bottom: 30px;
+        }
+
+        .cabecalho-analises h1 {
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .cabecalho-analises p {
+            color: #777;
+        }
+
+        .grid-analises {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 25px;
+        }
+
+        .card-analise {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 140px;
+            padding: 0px 25px 25px 25px;
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .card-analise:hover {
+            transform: translateY(-4px);
+            border-color: #4F46E5;
+            box-shadow: 0 5px 18px rgba(38, 59, 94, 0.10);
+        }
+
+        .card-analise p {
+            color: #777;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .card-link {
+            color: #4F46E5;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .pagina-analises {
+                width: 90%;
+            }
+
+            .grid-analises {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <header class="cabecalho-analises">
+        <h1>Clusterização</h1>
+        <p>
+            Explore e configure clusters de dados de 
+            todos os times da última temporada da NBA.
+        </p>
+    </header>
+
+
+    <section class="grid-analises">
+
+        <a href="{{ url_for('proj2.kmeans') }}"
+           class="card-analise">
+            <h2>K-Means</h2>
+            <p>
+                Divisão dos dados em uma quantidade definida (K)
+                de grupos, agrupando elementos semelhantes.
+            </p>
+            <span class="card-link">Ver clusters →</span>
+        </a>
+
+    </section>
+
+</main>
+
+{% endblock %}

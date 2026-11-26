@@ -30,6 +30,11 @@
                 class="{% if request.endpoint == 'proj1.projeto1' %}active{% endif %}">
                     Projeto 1
                 </a>
+
+                <a href="{{ url_for('proj2.projeto2') }}"
+                class="{% if request.endpoint == 'proj2.projeto2' %}active{% endif %}">
+                    Projeto 2
+                </a>
             </nav>
 
         </div>

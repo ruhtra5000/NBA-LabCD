@@ -5,6 +5,7 @@ from analises.tratamento import (
     analisarValoresEspeciais, excluirColunasPrevisao, df
 )
 from rotas.projeto1 import proj1_bp
+from rotas.projeto2 import proj2_bp
 
 
 # INICIALIZAÇÕES
@@ -37,6 +38,7 @@ def inicio():
 
 # Carregamento de blueprints (diretório "rotas")
 app.register_blueprint(proj1_bp)
+app.register_blueprint(proj2_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
