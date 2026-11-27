@@ -83,15 +83,64 @@
 
     <section class="grid-analises">
 
-        <a href="{{ url_for('proj2.kmeans', k=3) }}"
-           class="card-analise">
+        <a href="{{ url_for('proj2.kmeans', k=3) }}" class="card-analise">
             <h2>K-Means</h2>
             <p>
                 Divisão dos dados em uma quantidade definida (K)
                 de grupos, agrupando elementos semelhantes.
             </p>
-            <span class="card-link">Ver clusters →</span>
+            <span class="card-link">Ver agrupamentos →</span>
         </a>
+
+        <a href="{{ url_for('proj2.hierarchical') }}" class="card-analise">
+            <h2>Hierarchical Clustering</h2>
+            <p>
+                Agrupamento de dados por meio de uma estrutura
+                hierárquica, formando grupos com base na
+                similaridade entre os elementos.
+            </p>
+            <span class="card-link">Ver agrupamentos →</span>
+        </a>
+
+        <a href="{{ url_for('proj2.dbscan') }}" class="card-analise">
+            <h2>DBSCAN</h2>
+            <p>
+                Identificação de grupos com base na densidade
+                dos dados, permitindo encontrar agrupamentos
+                e identificar observações atípicas.
+            </p>
+            <span class="card-link">Ver agrupamentos →</span>
+        </a>
+
+        <a href="{{ url_for('proj2.gmm') }}" class="card-analise">
+            <h2>Gaussian Mixture Model</h2>
+            <p>
+                Agrupamento de dados utilizando distribuições
+                gaussianas, atribuindo probabilidades de
+                pertencimento a cada grupo.
+            </p>
+            <span class="card-link">Ver agrupamentos →</span>
+        </a>
+
+        <a href="{{ url_for('proj2.spectral') }}" class="card-analise">
+            <h2>Spectral Clustering</h2>
+            <p>
+                Formação de grupos por meio da análise das
+                relações de similaridade entre os dados,
+                identificando estruturas complexas.
+            </p>
+            <span class="card-link">Ver agrupamentos →</span>
+        </a>
+
+        <a href="{{ url_for('proj2.teoria') }}" class="card-analise">
+            <h2>Teoria</h2>
+            <p>
+                Profundidade no funcionamento 
+                teórico dos algoritmos de clusterização.
+            </p>
+            <span class="card-link">Ver teoria →</span>
+        </a>
+
 
     </section>
 

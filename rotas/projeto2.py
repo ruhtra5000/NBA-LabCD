@@ -7,7 +7,7 @@ proj2_bp = Blueprint("proj2", __name__)
 # ROTAS
 @proj2_bp.route("/proj2")
 def projeto2():
-    return render_template("projeto2.html")
+    return render_template("projeto2/projeto2.html")
 
 @proj2_bp.route("/kmeans/<int:k>")
 def kmeans(k: int):
@@ -106,7 +106,7 @@ def kmeans(k: int):
 
     # Retorno
     return render_template(
-        "kmeans.html",
+        "projeto2/kmeans.html",
         k=k,
         categorias=categorias,
         dispersao=dispersao_html,
@@ -124,3 +124,23 @@ def kmeans(k: int):
         variaveis=colunas,
         metadados=METADADOS_VARIAVEIS,
     )
+
+@proj2_bp.route("/hierarchical")
+def hierarchical():
+    return render_template("projeto2/hierarchical.html")
+
+@proj2_bp.route("/dbscan")
+def dbscan():
+    return render_template("projeto2/dbscan.html")
+
+@proj2_bp.route("/gmm")
+def gmm():
+    return render_template("projeto2/gmm.html")
+
+@proj2_bp.route("/spectral")
+def spectral():
+    return render_template("projeto2/spectral.html")
+
+@proj2_bp.route("/teoria")
+def teoria():
+    return render_template("projeto2/teoria.html")
