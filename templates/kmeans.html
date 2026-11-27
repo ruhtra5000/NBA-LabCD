@@ -8,4 +8,215 @@ K-Means
 
 <h1>K-Means</h1>
 
+<h2>Selecione a quantidade K de clusters</h2>
+
+<div class="seletor-k">
+    <a href="{{ url_for('proj2.kmeans', k=2) }}"
+       class="botao-k {% if k == 2 %}selecionado{% endif %}">
+        K = 2
+    </a>
+    <a href="{{ url_for('proj2.kmeans', k=3) }}"
+       class="botao-k {% if k == 3 %}selecionado{% endif %}">
+        K = 3
+    </a>
+    <a href="{{ url_for('proj2.kmeans', k=4) }}"
+       class="botao-k {% if k == 4 %}selecionado{% endif %}">
+        K = 4
+    </a>
+</div>
+
+<section class="categorizacao">
+    <h2>Características dos clusters</h2>
+
+    <p class="descricao-secao">
+        Identificação dos clusters de acordo com as características
+        predominantes nas partidas analisadas.
+    </p>
+
+    <div class="grid-categorias">
+        {% for categoria in categorias %}
+            <div class="card-categoria">
+                <div class="card-cabecalho">
+                    <h4>{{ categoria.nome }}</h4>
+                    <span>Cluster {{ categoria.cluster }}</span>
+                </div>
+
+                <p>{{ categoria.descricao }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="grafico-dispersao" id="dispersao">
+    <h2>Gráfico de dispersão</h2>
+    <p class="descricao-secao">
+        Selecione as variáveis que deseja comparar.
+    </p>
+
+    <form method="GET" 
+          action="{{ url_for('proj2.kmeans', k=k, _anchor='dispersao') }}"
+          class="filtros-grafico"
+    >
+        <div class="campo-eixo">
+            <label for="eixo_x">Eixo horizontal (X)</label>
+            <select name="eixo_x" id="eixo_x">
+                {% for variavel in variaveis %}
+                    <option value="{{ variavel }}"
+                        {% if variavel == eixo_x %}selected{% endif %}>
+                        {{ metadados[variavel].nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="campo-eixo">
+            <label for="eixo_y">Eixo vertical (Y)</label>
+            <select name="eixo_y" id="eixo_y">
+                {% for variavel in variaveis %}
+                    <option value="{{ variavel }}"
+                        {% if variavel == eixo_y %}selected{% endif %}>
+                        {{ metadados[variavel].nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="botao-atualizar">
+            Atualizar gráfico
+        </button>
+    </form>
+
+    <div class="grafico-container">
+        {{ dispersao | safe }}
+    </div>
+</section>
+
+<section class="grafico-boxplot" id="boxplot">
+    <h2>Boxplot - Distribuição das variáveis por cluster</h2>
+    <p class="descricao-secao">
+        Compare a distribuição dos valores de cada variável
+        entre os clusters identificados.
+    </p>
+
+    <div class="selecao-boxplot">
+        <h3>Selecione uma variável</h3>
+
+        <div class="botoes-variaveis">
+            {% for chave, meta in metadados.items() %}
+                <a href="{{ url_for(
+                    'proj2.kmeans',
+                    k=k,
+                    variavel_boxplot=chave,
+                    eixo_x=eixo_x,
+                    eixo_y=eixo_y,
+                    _anchor='boxplot'
+                ) }}"
+                   class="botao-variavel {% if variavel_boxplot == chave %}selecionado{% endif %}">
+                    {{ meta.nome }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="grafico-container">
+        {{ boxplot | safe }}
+    </div>
+
+</section>
+
+<section class="grafico-radar" id="radar">
+    <h2>Gráfico de Radar - Perfil dos clusters</h2>
+    <p class="descricao-secao">
+        Compare as características médias dos clusters
+        considerando todas as variáveis analisadas.
+    </p>
+
+    <div class="grafico-container">
+        {{ radar | safe }}
+    </div>
+</section>
+
+<section class="grafico-histograma" id="histograma">
+    <h2>Histograma - Distribuição das variáveis por cluster</h2>
+    <p class="descricao-secao">
+        Analise a frequência dos valores de cada variável
+        e compare suas distribuições entre os clusters.
+    </p>
+
+    <div class="selecao-histograma">
+        <h3>Selecione uma variável</h3>
+
+        <div class="botoes-variaveis">
+            {% for chave, meta in metadados.items() %}
+                <a href="{{ url_for(
+                    'proj2.kmeans',
+                    k=k,
+                    variavel_histograma=chave,
+                    variavel_boxplot=variavel_boxplot,
+                    eixo_x=eixo_x,
+                    eixo_y=eixo_y,
+                    _anchor='histograma'
+                ) }}"
+                   class="botao-variavel {% if variavel_histograma == chave %}selecionado{% endif %}">
+                    {{ meta.nome }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="grafico-container">
+        {{ histograma | safe }}
+    </div>
+</section>
+
+<section class="grafico-evolucao" id="evolucao">
+    <h2>Gráfico de linhas - Evolução dos clusters ao longo da temporada</h2>
+    <p class="descricao-secao">
+        Acompanhe como a frequência das partidas pertencentes a 
+        cada cluster varia ao longo do tempo, agrupados semanalmente.
+    </p>
+
+    <div class="grafico-container">
+        {{ evolucao | safe }}
+    </div>
+</section>
+
+<section class="grafico-quantidade" id="quantidade">
+    <h2>Gráfico de barras - Quantidade de partidas por cluster</h2>
+    <p class="descricao-secao">
+        Compare a quantidade de observações atribuídas
+        a cada cluster pelo algoritmo K-Means.
+    </p>
+
+    <div class="grafico-container">
+        {{ quantidade | safe }}
+    </div>
+</section>
+
+<section class="grafico-comparativo" id="comparacao-k">
+    <h2>Comparação da quantidade de partidas por K</h2>
+
+    <p class="descricao-secao">
+        Compare como as partidas são distribuídas entre
+        os clusters para diferentes valores de K.
+    </p>
+
+    <div class="grafico-container">
+        {{ comparacao_k | safe }}
+    </div>
+</section>
+
+<section class="grafico-comparativo" id="silhouette">
+    <h2>Comparação do Silhouette Score</h2>
+
+    <p class="descricao-secao">
+        Avalie a qualidade da separação dos agrupamentos
+        considerando diferentes valores de K.
+    </p>
+
+    <div class="grafico-container">
+        {{ silhouette | safe }}
+    </div>
+</section>
+
 {% endblock %}
