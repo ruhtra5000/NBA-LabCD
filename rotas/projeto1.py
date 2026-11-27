@@ -37,7 +37,7 @@ def resultadosOutliers(time):
 # ROTAS
 @proj1_bp.route("/proj1")
 def projeto1():
-    return render_template("projeto1.html")
+    return render_template("projeto1/projeto1.html")
 
 @proj1_bp.route("/mtc/<time>")
 def medidasTendCentral(time: str):
@@ -62,7 +62,7 @@ def medidasTendCentral(time: str):
     )
 
     return render_template(
-        "mtc.html",
+        "projeto1/mtc.html",
         time_selecionado=time,
         variavel_selecionada=variavel_selecionada,
         estatMediaModaMediana = estatMediaModaMediana,
@@ -94,7 +94,7 @@ def assimetria(time: str):
     )
 
     return render_template(
-        "assimetria.html",
+        "projeto1/assimetria.html",
         time_selecionado=time,
         variavel_selecionada=variavel_selecionada,
         metadados_variaveis=METADADOS_VARIAVEIS,
@@ -122,7 +122,7 @@ def coefVariacao(time: str):
     )
 
     return render_template(
-        "cv.html",
+        "projeto1/cv.html",
         time_selecionado=time,
         estatCv=estatCv,
         quadroResumo=quadroResumo,
@@ -145,7 +145,7 @@ def intervInterquartil(time: str):
     )
 
     return render_template(
-        "iqr.html",
+        "projeto1/iqr.html",
         time_selecionado=time,
         estatIqr=estatIqr,
         quadroResumo=quadroResumo,
@@ -165,7 +165,7 @@ def valoresInconsistentesOutliers(time: str):
     qualidade = analisarValoresEspeciais(df[df["nome_time"] == time])
     inconsistencias = {r["coluna"]: r["inconsistentes"] for r in qualidade["tabela"]}
     return render_template(
-        "outliers.html", time_selecionado=time, variavel_selecionada=variavel,
+        "projeto1/outliers.html", time_selecionado=time, variavel_selecionada=variavel,
         variaveis={c: metadadosColuna(c) for c in colunasNumericas(df)},
         metodos=METODOS, resultados=resultados, inconsistencias=inconsistencias,
         interpretacoes=interpretarOutliers(resultados, variavel),
